@@ -1,0 +1,296 @@
+
+rom.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         0000016c  00000000  00000000  00000074  2**0
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .bootloader   0000009e  0000fe00  0000fe00  000001e0  2**0
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  2 .stab         00000cf0  00000000  00000000  00000280  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  3 .stabstr      00000a57  00000000  00000000  00000f70  2**0
+                  CONTENTS, READONLY, DEBUGGING
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	0c 94 46 00 	jmp	0x8c	; 0x8c <__ctors_end>
+   4:	0c 94 63 00 	jmp	0xc6	; 0xc6 <__bad_interrupt>
+   8:	0c 94 63 00 	jmp	0xc6	; 0xc6 <__bad_interrupt>
+   c:	0c 94 63 00 	jmp	0xc6	; 0xc6 <__bad_interrupt>
+  10:	0c 94 63 00 	jmp	0xc6	; 0xc6 <__bad_interrupt>
+  14:	0c 94 63 00 	jmp	0xc6	; 0xc6 <__bad_interrupt>
+  18:	0c 94 63 00 	jmp	0xc6	; 0xc6 <__bad_interrupt>
+  1c:	0c 94 63 00 	jmp	0xc6	; 0xc6 <__bad_interrupt>
+  20:	0c 94 63 00 	jmp	0xc6	; 0xc6 <__bad_interrupt>
+  24:	0c 94 63 00 	jmp	0xc6	; 0xc6 <__bad_interrupt>
+  28:	0c 94 63 00 	jmp	0xc6	; 0xc6 <__bad_interrupt>
+  2c:	0c 94 63 00 	jmp	0xc6	; 0xc6 <__bad_interrupt>
+  30:	0c 94 63 00 	jmp	0xc6	; 0xc6 <__bad_interrupt>
+  34:	0c 94 63 00 	jmp	0xc6	; 0xc6 <__bad_interrupt>
+  38:	0c 94 63 00 	jmp	0xc6	; 0xc6 <__bad_interrupt>
+  3c:	0c 94 63 00 	jmp	0xc6	; 0xc6 <__bad_interrupt>
+  40:	0c 94 63 00 	jmp	0xc6	; 0xc6 <__bad_interrupt>
+  44:	0c 94 63 00 	jmp	0xc6	; 0xc6 <__bad_interrupt>
+  48:	0c 94 63 00 	jmp	0xc6	; 0xc6 <__bad_interrupt>
+  4c:	0c 94 63 00 	jmp	0xc6	; 0xc6 <__bad_interrupt>
+  50:	0c 94 63 00 	jmp	0xc6	; 0xc6 <__bad_interrupt>
+  54:	0c 94 63 00 	jmp	0xc6	; 0xc6 <__bad_interrupt>
+  58:	0c 94 63 00 	jmp	0xc6	; 0xc6 <__bad_interrupt>
+  5c:	0c 94 63 00 	jmp	0xc6	; 0xc6 <__bad_interrupt>
+  60:	0c 94 63 00 	jmp	0xc6	; 0xc6 <__bad_interrupt>
+  64:	0c 94 63 00 	jmp	0xc6	; 0xc6 <__bad_interrupt>
+  68:	0c 94 63 00 	jmp	0xc6	; 0xc6 <__bad_interrupt>
+  6c:	0c 94 63 00 	jmp	0xc6	; 0xc6 <__bad_interrupt>
+  70:	0c 94 63 00 	jmp	0xc6	; 0xc6 <__bad_interrupt>
+  74:	0c 94 63 00 	jmp	0xc6	; 0xc6 <__bad_interrupt>
+  78:	0c 94 63 00 	jmp	0xc6	; 0xc6 <__bad_interrupt>
+  7c:	0c 94 63 00 	jmp	0xc6	; 0xc6 <__bad_interrupt>
+  80:	0c 94 63 00 	jmp	0xc6	; 0xc6 <__bad_interrupt>
+  84:	0c 94 63 00 	jmp	0xc6	; 0xc6 <__bad_interrupt>
+  88:	0c 94 63 00 	jmp	0xc6	; 0xc6 <__bad_interrupt>
+
+0000008c <__ctors_end>:
+  8c:	11 24       	eor	r1, r1
+  8e:	1f be       	out	0x3f, r1	; 63
+  90:	cf ef       	ldi	r28, 0xFF	; 255
+  92:	d0 e1       	ldi	r29, 0x10	; 16
+  94:	de bf       	out	0x3e, r29	; 62
+  96:	cd bf       	out	0x3d, r28	; 61
+
+00000098 <__do_copy_data>:
+  98:	11 e0       	ldi	r17, 0x01	; 1
+  9a:	a0 e0       	ldi	r26, 0x00	; 0
+  9c:	b1 e0       	ldi	r27, 0x01	; 1
+  9e:	ec e6       	ldi	r30, 0x6C	; 108
+  a0:	f1 e0       	ldi	r31, 0x01	; 1
+  a2:	00 e0       	ldi	r16, 0x00	; 0
+  a4:	0b bf       	out	0x3b, r16	; 59
+  a6:	02 c0       	rjmp	.+4      	; 0xac <__do_copy_data+0x14>
+  a8:	07 90       	elpm	r0, Z+
+  aa:	0d 92       	st	X+, r0
+  ac:	a0 30       	cpi	r26, 0x00	; 0
+  ae:	b1 07       	cpc	r27, r17
+  b0:	d9 f7       	brne	.-10     	; 0xa8 <__do_copy_data+0x10>
+
+000000b2 <__do_clear_bss>:
+  b2:	11 e0       	ldi	r17, 0x01	; 1
+  b4:	a0 e0       	ldi	r26, 0x00	; 0
+  b6:	b1 e0       	ldi	r27, 0x01	; 1
+  b8:	01 c0       	rjmp	.+2      	; 0xbc <.do_clear_bss_start>
+
+000000ba <.do_clear_bss_loop>:
+  ba:	1d 92       	st	X+, r1
+
+000000bc <.do_clear_bss_start>:
+  bc:	a0 30       	cpi	r26, 0x00	; 0
+  be:	b1 07       	cpc	r27, r17
+  c0:	e1 f7       	brne	.-8      	; 0xba <.do_clear_bss_loop>
+  c2:	0c 94 80 00 	jmp	0x100	; 0x100 <main>
+
+000000c6 <__bad_interrupt>:
+  c6:	0c 94 00 00 	jmp	0	; 0x0 <__heap_end>
+
+000000ca <delay_us>:
+void delay_us(int us)
+{
+  ca:	20 e0       	ldi	r18, 0x00	; 0
+  cc:	30 e0       	ldi	r19, 0x00	; 0
+  ce:	02 c0       	rjmp	.+4      	; 0xd4 <delay_us+0xa>
+	int i;
+
+	for( i = 0 ; i <  us ; i++)
+  d0:	2f 5f       	subi	r18, 0xFF	; 255
+  d2:	3f 4f       	sbci	r19, 0xFF	; 255
+  d4:	28 17       	cp	r18, r24
+  d6:	39 07       	cpc	r19, r25
+  d8:	dc f3       	brlt	.-10     	; 0xd0 <delay_us+0x6>
+  da:	08 95       	ret
+
+000000dc <delay_ms>:
+	{
+		//do nothing
+	}
+	
+	return;
+}
+
+void delay_ms(int ms)
+{
+  dc:	40 e0       	ldi	r20, 0x00	; 0
+  de:	50 e0       	ldi	r21, 0x00	; 0
+  e0:	07 c0       	rjmp	.+14     	; 0xf0 <delay_ms+0x14>
+	int i,j;
+
+	for( i = 0 ; i <   ms ; i++)
+  e2:	28 ee       	ldi	r18, 0xE8	; 232
+  e4:	33 e0       	ldi	r19, 0x03	; 3
+  e6:	21 50       	subi	r18, 0x01	; 1
+  e8:	30 40       	sbci	r19, 0x00	; 0
+	for( j = 0 ; j < 1000 ; j++)
+  ea:	e9 f7       	brne	.-6      	; 0xe6 <delay_ms+0xa>
+  ec:	4f 5f       	subi	r20, 0xFF	; 255
+  ee:	5f 4f       	sbci	r21, 0xFF	; 255
+  f0:	48 17       	cp	r20, r24
+  f2:	59 07       	cpc	r21, r25
+  f4:	b4 f3       	brlt	.-20     	; 0xe2 <delay_ms+0x6>
+  f6:	08 95       	ret
+
+000000f8 <init>:
+#include "main.h"
+
+void init(void)
+{
+	DDRD = 0xFF;
+  f8:	8f ef       	ldi	r24, 0xFF	; 255
+  fa:	81 bb       	out	0x11, r24	; 17
+	PORTD = 0xFF;
+  fc:	82 bb       	out	0x12, r24	; 18
+  fe:	08 95       	ret
+
+00000100 <main>:
+	
+	return;
+}
+
+int main(void)
+{
+ 100:	cf ef       	ldi	r28, 0xFF	; 255
+ 102:	d0 e1       	ldi	r29, 0x10	; 16
+ 104:	de bf       	out	0x3e, r29	; 62
+ 106:	cd bf       	out	0x3d, r28	; 61
+ 108:	8f ef       	ldi	r24, 0xFF	; 255
+ 10a:	81 bb       	out	0x11, r24	; 17
+ 10c:	82 bb       	out	0x12, r24	; 18
+	uint32_t i;
+	char *buf;
+	
+	init();
+
+	boot_page_erase(1);
+ 10e:	23 e0       	ldi	r18, 0x03	; 3
+ 110:	81 e0       	ldi	r24, 0x01	; 1
+ 112:	90 e0       	ldi	r25, 0x00	; 0
+ 114:	a0 e0       	ldi	r26, 0x00	; 0
+ 116:	b0 e0       	ldi	r27, 0x00	; 0
+ 118:	fc 01       	movw	r30, r24
+ 11a:	a0 93 5b 00 	sts	0x005B, r26
+ 11e:	20 93 68 00 	sts	0x0068, r18
+ 122:	e8 95       	spm
+
+	i = 0 ; buf = 0;
+	boot_program_page(i, buf);
+ 124:	40 e0       	ldi	r20, 0x00	; 0
+ 126:	50 e0       	ldi	r21, 0x00	; 0
+ 128:	60 e0       	ldi	r22, 0x00	; 0
+ 12a:	70 e0       	ldi	r23, 0x00	; 0
+ 12c:	80 e0       	ldi	r24, 0x00	; 0
+ 12e:	90 e0       	ldi	r25, 0x00	; 0
+ 130:	0e 94 00 7f 	call	0xfe00	; 0xfe00 <boot_program_page>
+	
+	while(1)
+	{
+		delay_ms(100);
+ 134:	84 e6       	ldi	r24, 0x64	; 100
+ 136:	90 e0       	ldi	r25, 0x00	; 0
+ 138:	0e 94 6e 00 	call	0xdc	; 0xdc <delay_ms>
+		PORTD = ~PORTD;
+ 13c:	82 b3       	in	r24, 0x12	; 18
+ 13e:	80 95       	com	r24
+ 140:	82 bb       	out	0x12, r24	; 18
+ 142:	f8 cf       	rjmp	.-16     	; 0x134 <main+0x34>
+
+00000144 <page_erase>:
+ 144:	3f b7       	in	r19, 0x3f	; 63
+ 146:	23 e0       	ldi	r18, 0x03	; 3
+ 148:	fb 01       	movw	r30, r22
+ 14a:	80 93 5b 00 	sts	0x005B, r24
+ 14e:	20 93 68 00 	sts	0x0068, r18
+ 152:	e8 95       	spm
+ 154:	80 91 68 00 	lds	r24, 0x0068
+ 158:	80 fd       	sbrc	r24, 0
+ 15a:	fc cf       	rjmp	.-8      	; 0x154 <page_erase+0x10>
+ 15c:	81 e1       	ldi	r24, 0x11	; 17
+ 15e:	80 93 68 00 	sts	0x0068, r24
+ 162:	e8 95       	spm
+ 164:	3f bf       	out	0x3f, r19	; 63
+ 166:	80 e0       	ldi	r24, 0x00	; 0
+ 168:	90 e0       	ldi	r25, 0x00	; 0
+ 16a:	08 95       	ret
+Disassembly of section .bootloader:
+
+0000fe00 <boot_program_page>:
+    fe00:	df 92       	push	r13
+    fe02:	ef 92       	push	r14
+    fe04:	ff 92       	push	r15
+    fe06:	0f 93       	push	r16
+    fe08:	1f 93       	push	r17
+    fe0a:	cf 93       	push	r28
+    fe0c:	df 93       	push	r29
+    fe0e:	7b 01       	movw	r14, r22
+    fe10:	8c 01       	movw	r16, r24
+    fe12:	da 01       	movw	r26, r20
+	}
+
+	return 0;
+}	
+    fe14:	df b6       	in	r13, 0x3f	; 63
+    fe16:	f8 94       	cli
+    fe18:	e1 99       	sbic	0x1c, 1	; 28
+    fe1a:	fe cf       	rjmp	.-4      	; 0xfe18 <boot_program_page+0x18>
+    fe1c:	83 e0       	ldi	r24, 0x03	; 3
+    fe1e:	f7 01       	movw	r30, r14
+    fe20:	00 93 5b 00 	sts	0x005B, r16
+    fe24:	80 93 68 00 	sts	0x0068, r24
+    fe28:	e8 95       	spm
+    fe2a:	80 91 68 00 	lds	r24, 0x0068
+    fe2e:	80 fd       	sbrc	r24, 0
+    fe30:	fc cf       	rjmp	.-8      	; 0xfe2a <boot_program_page+0x2a>
+    fe32:	b8 01       	movw	r22, r16
+    fe34:	a7 01       	movw	r20, r14
+    fe36:	c0 e8       	ldi	r28, 0x80	; 128
+    fe38:	d0 e0       	ldi	r29, 0x00	; 0
+    fe3a:	31 e0       	ldi	r19, 0x01	; 1
+    fe3c:	2c 91       	ld	r18, X
+    fe3e:	fd 01       	movw	r30, r26
+    fe40:	81 81       	ldd	r24, Z+1	; 0x01
+    fe42:	12 96       	adiw	r26, 0x02	; 2
+    fe44:	99 27       	eor	r25, r25
+    fe46:	98 2f       	mov	r25, r24
+    fe48:	88 27       	eor	r24, r24
+    fe4a:	82 0f       	add	r24, r18
+    fe4c:	91 1d       	adc	r25, r1
+    fe4e:	0c 01       	movw	r0, r24
+    fe50:	fa 01       	movw	r30, r20
+    fe52:	60 93 5b 00 	sts	0x005B, r22
+    fe56:	30 93 68 00 	sts	0x0068, r19
+    fe5a:	e8 95       	spm
+    fe5c:	11 24       	eor	r1, r1
+    fe5e:	21 97       	sbiw	r28, 0x01	; 1
+    fe60:	4e 5f       	subi	r20, 0xFE	; 254
+    fe62:	5f 4f       	sbci	r21, 0xFF	; 255
+    fe64:	6f 4f       	sbci	r22, 0xFF	; 255
+    fe66:	7f 4f       	sbci	r23, 0xFF	; 255
+    fe68:	20 97       	sbiw	r28, 0x00	; 0
+    fe6a:	41 f7       	brne	.-48     	; 0xfe3c <boot_program_page+0x3c>
+    fe6c:	85 e0       	ldi	r24, 0x05	; 5
+    fe6e:	f7 01       	movw	r30, r14
+    fe70:	00 93 5b 00 	sts	0x005B, r16
+    fe74:	80 93 68 00 	sts	0x0068, r24
+    fe78:	e8 95       	spm
+    fe7a:	80 91 68 00 	lds	r24, 0x0068
+    fe7e:	80 fd       	sbrc	r24, 0
+    fe80:	fc cf       	rjmp	.-8      	; 0xfe7a <boot_program_page+0x7a>
+    fe82:	81 e1       	ldi	r24, 0x11	; 17
+    fe84:	80 93 68 00 	sts	0x0068, r24
+    fe88:	e8 95       	spm
+    fe8a:	df be       	out	0x3f, r13	; 63
+    fe8c:	78 94       	sei
+    fe8e:	df 91       	pop	r29
+    fe90:	cf 91       	pop	r28
+    fe92:	1f 91       	pop	r17
+    fe94:	0f 91       	pop	r16
+    fe96:	ff 90       	pop	r15
+    fe98:	ef 90       	pop	r14
+    fe9a:	df 90       	pop	r13
+    fe9c:	08 95       	ret

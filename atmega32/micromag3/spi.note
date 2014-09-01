@@ -1,0 +1,2 @@
+spi_init() : initializes spi
+spi_tx() : transmits 

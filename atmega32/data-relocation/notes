@@ -1,0 +1,160 @@
+If you programming AVR microcontrollers in C usually you don’t think how compiled program is stored in microcontrollers flash memory. Compiler organises data in the way it looks optimal. But sometimes you are working with programs where you need you code chunks located in specific program memory locations. For instance faced this problem while developing an AVR controlled signal generator. I wanted to make efficient and compiler independent main loop where the signal has to be read from flash memory and transferred to port. I managed to use in line ASM function which does the job:
+
+//……………………………………………………..
+
+void static inline signalOUT(const uint8_t *signal, uint8_t ad2, uint8_t ad1, uint8_t ad0)
+
+{
+
+	asm volatile( “eor r18, r18 ;r18<-0" "\n\t"
+
+	“eor r19, r19 ;r19<-0" "\n\t"
+
+	“1:” “\n\t”
+
+	“add r18, %0 ;1 cycle” “\n\t”
+
+	“adc r19, %1 ;1 cycle” “\n\t”
+
+	“adc %A3, %2 ;1 cycle” “\n\t”
+
+	“lpm ;3 cycles” “\n\t”
+
+	“out %4, __tmp_reg__ ;1 cycle” “\n\t”
+
+	“rjmp 1b ;2 cycles. Total 9 cycles” “\n\t”
+
+	:
+
+	:”r” (ad0),”r” (ad1),”r” (ad2),”e” (signal),”I” (_SFR_IO_ADDR(PORTD))
+
+	:”r18″, “r19″
+
+	);
+
+}
+
+//……………………………………………………..
+
+The linker produces ASM code like this:
+
+eor r18, r18 ;r18<-0
+
+eor r19, r19 ;r19<-0
+
+1:
+
+add r18, r11 ;1 cycle
+
+adc r19, r16 ;1 cycle
+
+adc r30, r17 ;1 cycle
+
+lpm ;3 cycles
+
+out 18, __tmp_reg__ ;1 cycle
+
+rjmp 1b ;2 cycles. Total 9 cycles
+
+I am not going to deep in this algorithm but this generates DDS signal where frequency can be controlled by varyin phase accumulator. I managed to send one sample in nine clock cycles. Using in line ASM this part doesn’t depend on compiler optimisation - always will be the same.
+
+I needed to pass signal table pointer value to this function:
+
+//……………………………………………………..
+
+signalOUT(sinewave,tfreq3, tfreq2, tfreq1);
+
+//……………………………………………………..
+
+My signal tables was declared like this:
+
+//……………………………………………………..
+
+//signals saved in flash memory
+
+const uint8_t sinewave[] PROGMEM= //256 values
+
+{0×80,0×83,0×86,0×89,0×8c,0×8f,0×92,0×95….
+
+//……………………………………………………..
+
+And my algorithm wasn’t working correctly. Because signal tables were not located at 256 byte boundary but my algorithm requires the address to start at this boundary, otherwise it reads part of signal table and then continues reading other data from flash memory. In other Words I needed to store at addresses like .org 0×100, .org 0×200…
+
+Of course AVRGCC doesn’t support such commands but there are another way – Use memory sections. Using them is not very hard.
+
+The memory space “seen” by AVRGCC runs from addresses:
+
+…………………………………………………………………
+
+0×00000000 up to 0×0007FFFF for Flash memory,
+0×00800000 up to 0×0080FFFF for RAM, and
+0×00810000 up to 0×0081FFFF for EEPROM.
+
+………………………………………………………………..
+
+This means if you need your variable to be stored at specific RAM address you need to add offset 0×00800000 to your desired RAM address like if you want the .data section to start at 0×1100, pass 0×801100 at the address to the linker.
+
+Same is with EEPROM just offset is 0×00810000. For flash memory you don’t need to add offsets.
+
+Practically speaking you may ask where to define these sections? Returning to my example I defined my signal table this way:
+
+//……………………………………………………..
+
+//signals saved in flash memory
+
+const uint8_t sinewave[] __attribute__ ((section (”.MySection1″)))= //256 values
+
+{0×80,0×83,0×86,0×89,0×8c,0×8f,0×92…
+
+//……………………………………………………..
+
+you see I placed __attribute__ ((section (”.MySection1″))) instead of PROGMEM. This means that instead letting compiler decide whereto store this table I will deine this place by myself.
+
+Now I need to define Mysection1. Lets say I want to put this table at flash address 0×1F00. Then I need to tel linker to put this section there by using command:
+
+………………………………………………….
+
+-Wl,--section-start=.MySection1=0x1F00
+
+…………………………………………………
+
+How to do this? If you work With WinAVR tool-set just open Makefile and find where is
+
+……………………………………………………..
+
+CFLAGS += $(patsubst %,-I%,$(EXTRAINCDIRS))
+
+CFLAGS += $(CSTANDARD) located.
+
+…………………………………………………….
+
+At the end write additional line:
+
+…………………………………………………….
+
+CFLAGS += -Wl,-section-start=.MySection5=0×1F00
+
+…………………………………………………….
+
+This is it now you can compile the program.
+
+Now my table is located at Address 0×1F00:
+
+……………………………………………………..
+
+:101F000000020406080A0C0E10121416181A1C1EE1
+
+:101F100020222426282A2C2E30323436383A3C3ED1
+
+:101F200040424446484A4C4E50525456585A5C5EC1
+
+:101F300060626466686A6C6E70727476787A7C7EB1
+
+…
+
+…………………………………………………………………….
+
+Note: To avoid any potential stack collisions or conflicts with other existing data in Flash memory, it would probably be best to locate such a memory section at the very end of program memory.
+
+Written by scienceprog on July 5th, 2006 with no comments.
+Read more articles on AVR Microcontrollers. 

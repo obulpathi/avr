@@ -1,0 +1,121 @@
+source : http://electrons.psychogenic.com/modules/arms/art/6/SimulatingandDebuggingAVRprograms.php
+
+Frame format and baud rate :
+This works with default frame format and baud rate.
+
+Intialization:
+USART_Init(USART_BAUD_4800, USART_FRAME_8N2);
+
+ne of the most useful components in any programer's toolbox is the debugger. Debugging a program, as it runs, provides a live look at its internals. Whereas poring over the source code you yourself created might only delay discovery of a bug (the mind that conceived a flaw has a tendency to cling to it--at least in my case ;-) ), examining the state of the system at specific points during execution may help you to spot an inconsistency or logic error in a matter of minutes.
+TOC
+
+    * Debugging Microcontrollers
+        * Installing The AVR Debug Toolkit
+          o SimulAVR
+            o AVR-GDB
+        * Creating programs to debug
+    * Using simulavr
+        * Using avr-gdb
+
+Debugging Microcontrollers
+
+When it comes to embedded systems and microcontrollers, debugging can be a little more complex than on a desktop workstation or server. There's often little means for debug output or feedback from this type of system and you usually can't run a debugger on the microchips. The solution we prefer is to use simulavr as a backend to gdb. This will be the focus of the present document.
+
+To actually build AVR programs to work with avr-gdb, you need to install the Free software AVR development toolchain (which includes binutils configured for AVR targets, avr-gcc and avr-libc). Please check out installation instructions if you haven't done so already.
+Installing The AVR Debug Toolkit
+
+To implement our approach, you'll need two distinct programs: the simulavr AVR simulator and GDB, the GNU Debugger, compiled for AVR targets.
+
+As was the case with the Free software AVR development toolchain we will assume you've decided to segregate all AVR-related tools in their own directory tree, under /usr/local/AVR. In addition, some of those tools must be accessible during configuration so make sure /usr/local/AVR/bin is present in your PATH.
+SimulAVR
+
+Begin by retrieving the latest release of Simulavr, from their Savannah project site. Due to recent events, you may be forced to use the version from CVS--follow the instructions on site to perform that download.
+
+Compilation and installation should be straightforward:
+
+$ ./configure --with-avr-includes=/usr/local/AVR/avr/include/ \
+              --prefix=/usr/local/AVR
+      $ make
+# make install
+
+      AVR-GDB
+
+      Get the GDB 6.x source code, which already contains everything needed to debug AVR programs. Compilation and installation are also simple and very similar:
+
+      $ ./configure --target=avr --prefix=/usr/local/AVR
+      $ make
+# make install
+
+      Creating programs to debug
+
+      Programs built for use with the debugger should include the -g switch when compiling C or C++ and pass the gstabs argument to the assembler (-Wa,-gstabs, when using avr-gcc) when programming in assembly. Our AVR Project Makefile template will take care of these details for you, if you choose to use it for your projects.
+      Using simulavr
+
+      Simulavr can be used either standalone or as a remote target for gdb. The simulavr program simulates an AVR chip running on top of your CPU. It can interpret AVR programs and react like a number of different AVR family members. To see the list of supported chips, run simulavr -L. The version currently installed here supports the following:
+
+              at90s1200
+              at90s2313
+              at90s4414
+              at90s8515
+              atmega8
+              atmega16
+              atmega103
+              atmega128
+              at43usb351
+              at43usb353
+              at43usb355
+              at43usb320
+              at43usb324
+              at43usb325
+              at43usb326
+
+      To launch simulavr for our purposes, select the device (e.g. at90s8515) and start the simulator as a gdbserver:
+
+      $ simulavr --device at90s8515 --gdbserver
+      Simulating a at90s8515 device.
+       
+       MESSAGE: file decoder.c: line 3872: generating opcode lookup_table
+       MESSAGE: file main.c: line 413: Simulating clock frequency of 8000000 Hz
+       Waiting on port 1212 for gdb client to connect...
+
+       At this point, the program will just sit and listen on a TCP port (1212 by default) for connections.
+       Using avr-gdb
+
+       When you have built an AVR program and launched simulavr, you can use gdb in the same manner as usual. The main differences involve how it is launched and configured.
+
+       If you are using our AVR project Makefile template, all you need to do is:
+
+       $ make gdbinit
+       $ avr-gdb -x gdbinit-myproject
+
+       and the debugger will launch the program, halting right at the start of main().
+
+       Assuming you've been working on myproject and compiled an AVR program, myproject.out (in ELF format), here are the steps you would follow to achieve the same results manually:
+
+       $ cd /path/to/executable
+       $ avr-gdb
+
+       After launching avr-gdb the following commands are issued, marked by the "(gdb)" lines, within the debugger:
+
+             (gdb) file myproject.out
+           Reading symbols from myproject.out...done.
+
+         (gdb) target remote localhost:1212
+       Remote debugging using localhost:1212
+             0x00000000 in __vectors ()
+
+           (gdb) load
+         Loading section .text, size 0xb0 lma 0x0
+       Start address 0x0, load size 176
+             Transfer rate: 1408 bits in <1 sec, 29 bytes/write.
+
+           (gdb) break main
+         Breakpoint 1 at 0x5a: file main.c, line 16.
+
+       (gdb) continue
+             Continuing. 
+           Breakpoint 1, main () at main.c:16
+         16              volatile enum {UP, DOWN} direction = UP;
+
+
+ From this point on, you will be in the familiar gdb settings and can enjoy debugging your code. As you do so, you'll want to keep an eye on the simulavr output. A message is printed to standard out when a gdb connection is made or broken. In addition, simulavr will output register and memory writes as they occur.

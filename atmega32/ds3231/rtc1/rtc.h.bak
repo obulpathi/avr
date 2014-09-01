@@ -1,0 +1,9 @@
+#define TIMER 0xD0
+
+//#include "/home/naidu/projects/wildCENSE/os/atmega32/modules/usart/blocking/usart.h"
+//#include "/home/naidu/projects/wildCENSE/os/atmega32/modules/usart/blocking/usart.c"
+
+void USART_TransmitHex(char);
+void RTC_Init(void);
+char RTC_ReadTime(void);
+void RTC_WriteTime(void);

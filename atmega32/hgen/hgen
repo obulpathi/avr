@@ -1,0 +1,10 @@
+# identify all .c files and dump hgen output to their corresponding .h files.
+#for( file in 'ls' )
+#{
+#	cat file | grep \(*\) | grep -v if\(*\) | grep -v for\(*\) | grep -v while\(*\) | grep -v ";" | awk -F "\n" '{ print $1";"}'
+#}
+#
+# how to avoid commented code ??? ... use * as delimiter kind of and try ... ??
+# start scaning for /* ... on finding stop outputting and start printing on finding */ ... done 
+# simple remove everything between /* and */ ... with FS as EOF ... 
+grep \(*\) | grep -v if\(*\) | grep -v for\(*\) | grep -v while\(*\) | grep -v ";" | grep -v "//" | awk -F "\n" '{ print $1";"}'

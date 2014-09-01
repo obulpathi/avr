@@ -1,0 +1,18 @@
+this note explains in detail about compilation and stuff ... 
+
+step1: main.c -> main.o
+avr-gcc -g -Os -mmcu=atmega32 -c main.c
+-g : debugger support
+-Os : optimize for space
+
+step2: linking main.o -> main.elf
+avr-gcc -g -mmcu=atmega8 -o main.elf main.o
+
+examining the object file
+avr-objdump -h -S main.elf > main.lst
+
+generating a map file
+avr-gcc -g -mmcu=atmega8 -Wl,-Map,demo.map -o demo.elf demo.o
+
+generating hex file
+avr-objcopy -j .text -j .data -O ihex demo.elf demo.hex

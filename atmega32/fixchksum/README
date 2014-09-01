@@ -1,0 +1,18 @@
+
+Fixchksum reads an Intel hex file, computes the checksum for each record,
+and if it doesn't match the checksum in the record, writes out a new file
+with the proper checksum(s).
+
+If you modify data in a hex file with a text editor, the record must remain
+the same length as the original. Only the data may be changed.
+
+The output file will only be written if one or more records have been fixed.
+The file will have the same name as the input file, but with the ".hex"
+extension replaced with "-fixed.hex". The original hex file is not modified.
+
+Example:
+
+  fixchksum test.hex
+
+reads the file 'test.hex' and generates a file 'test-fixed.hex'.
+

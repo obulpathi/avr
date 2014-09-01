@@ -1,0 +1,31 @@
+tools : 
+avarice (1)          - Provides an interface from avr-gdb to Atmel's JTAGICE box.
+bsdl2jtag (1)        - bsdl2jtag
+jtag (1)             - jtag manipulation tool
+
+JTAG (IEEE std. 1149.1 Compliant) Interface
+Boundary-scan Capabilities According to the JTAG Standard
+Full Scan of all Port Functions as well as Analog Circuitry having Off-chip Connections
+Supports the Optional IDCODE Instruction
+Additional Public AVR_RESET Instruction to Reset the AVR
+
+
+avarice --program --file [app name].elf --part [platform name] --jtag [device location] :[port number]
+avr-gdb application.elf
+target remote localhost:[port number]
+
+
+avarice --program --file main.elf --part atmega32 --jtag com1 :4242
+
+avr-gdb main.elf
+(gdb) target remote localhost:4242
+
+AVARICE_ARGS="-j /dev/ttyUSB0" ice-gdb main.elf
+
+avarice -B 125KHz --program --file main.out --part atmega32 --jtag /dev/ttyUSB0 :4242
+avr-gdb main.out
+target remote localhost:4242
+... execute in the same sequence ... 
+
+
+first step .. looks like there some probelm there ... 

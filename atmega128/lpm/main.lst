@@ -1,0 +1,203 @@
+   1               		.file	"main.c"
+   2               		.arch atmega128
+   3               	__SREG__ = 0x3f
+   4               	__SP_H__ = 0x3e
+   5               	__SP_L__ = 0x3d
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+   8               		.global __do_copy_data
+   9               		.global __do_clear_bss
+  12               		.text
+  13               	.Ltext0:
+  94               	.global	delay_us
+  96               	delay_us:
+  97               		.stabd	46,0,0
+  99               	.Ltext1:
+   1:delay.c       **** void delay_us(int us)
+   2:delay.c       **** {
+ 101               	.LM0:
+ 102               	/* prologue: frame size=0 */
+ 103               	/* prologue end (size=0) */
+ 104 0000 20E0      		ldi r18,lo8(0)
+ 105 0002 30E0      		ldi r19,hi8(0)
+ 106 0004 00C0      		rjmp .L2
+ 107               	.L3:
+   3:delay.c       **** 	int i;
+   4:delay.c       **** 
+   5:delay.c       **** 	for( i = 0 ; i <  us ; i++)
+ 109               	.LM1:
+ 110 0006 2F5F      		subi r18,lo8(-(1))
+ 111 0008 3F4F      		sbci r19,hi8(-(1))
+ 112               	.L2:
+ 113 000a 2817      		cp r18,r24
+ 114 000c 3907      		cpc r19,r25
+ 115 000e 04F0      		brlt .L3
+ 116               	/* epilogue: frame size=0 */
+ 117 0010 0895      		ret
+ 118               	/* epilogue end (size=1) */
+ 119               	/* function delay_us size 9 (8) */
+ 124               	.Lscope0:
+ 126               		.stabd	78,0,0
+ 129               	.global	delay_ms
+ 131               	delay_ms:
+ 132               		.stabd	46,0,0
+   6:delay.c       **** 	{
+   7:delay.c       **** 		//do nothing
+   8:delay.c       **** 	}
+   9:delay.c       **** 	
+  10:delay.c       **** 	return;
+  11:delay.c       **** }
+  12:delay.c       **** 
+  13:delay.c       **** void delay_ms(int ms)
+  14:delay.c       **** {
+ 134               	.LM2:
+ 135               	/* prologue: frame size=0 */
+ 136               	/* prologue end (size=0) */
+ 137 0012 40E0      		ldi r20,lo8(0)
+ 138 0014 50E0      		ldi r21,hi8(0)
+ 139 0016 00C0      		rjmp .L7
+ 140               	.L8:
+  15:delay.c       **** 	int i,j;
+  16:delay.c       **** 
+  17:delay.c       **** 	for( i = 0 ; i <   ms ; i++)
+ 142               	.LM3:
+ 143 0018 28EE      		ldi r18,lo8(1000)
+ 144 001a 33E0      		ldi r19,hi8(1000)
+ 145               	.L9:
+ 146 001c 2150      		subi r18,lo8(-(-1))
+ 147 001e 3040      		sbci r19,hi8(-(-1))
+  18:delay.c       **** 	for( j = 0 ; j < 1000 ; j++)
+ 149               	.LM4:
+ 150 0020 01F4      		brne .L9
+ 152               	.LM5:
+ 153 0022 4F5F      		subi r20,lo8(-(1))
+ 154 0024 5F4F      		sbci r21,hi8(-(1))
+ 155               	.L7:
+ 156 0026 4817      		cp r20,r24
+ 157 0028 5907      		cpc r21,r25
+ 158 002a 04F0      		brlt .L8
+ 159               	/* epilogue: frame size=0 */
+ 160 002c 0895      		ret
+ 161               	/* epilogue end (size=1) */
+ 162               	/* function delay_ms size 16 (15) */
+ 167               	.Lscope1:
+ 169               		.stabd	78,0,0
+ 171               	.global	init
+ 173               	init:
+ 174               		.stabd	46,0,0
+ 176               	.Ltext2:
+   1:main.c        **** #include "main.h"
+   2:main.c        **** 
+   3:main.c        **** void init(void)
+   4:main.c        **** {
+ 178               	.LM6:
+ 179               	/* prologue: frame size=0 */
+ 180               	/* prologue end (size=0) */
+   5:main.c        **** 	DDRD = 0xFF;
+ 182               	.LM7:
+ 183 002e 8FEF      		ldi r24,lo8(-1)
+ 184 0030 81BB      		out 49-0x20,r24
+   6:main.c        **** 	PORTD = 0xFF;
+ 186               	.LM8:
+ 187 0032 82BB      		out 50-0x20,r24
+ 188               	/* epilogue: frame size=0 */
+ 189 0034 0895      		ret
+ 190               	/* epilogue end (size=1) */
+ 191               	/* function init size 4 (3) */
+ 193               	.Lscope2:
+ 195               		.stabd	78,0,0
+ 197               	.global	main
+ 199               	main:
+ 200               		.stabd	46,0,0
+   7:main.c        **** 	
+   8:main.c        **** 	return;
+   9:main.c        **** }
+  10:main.c        **** 
+  11:main.c        **** int main(void)
+  12:main.c        **** {
+ 202               	.LM9:
+ 203               	/* prologue: frame size=0 */
+ 204 0036 C0E0      		ldi r28,lo8(__stack - 0)
+ 205 0038 D0E0      		ldi r29,hi8(__stack - 0)
+ 206 003a DEBF      		out __SP_H__,r29
+ 207 003c CDBF      		out __SP_L__,r28
+ 208               	/* prologue end (size=4) */
+ 209               	.LBB2:
+ 210               	.LBB3:
+ 212               	.LM10:
+ 213 003e 8FEF      		ldi r24,lo8(-1)
+ 214 0040 81BB      		out 49-0x20,r24
+ 216               	.LM11:
+ 217 0042 82BB      		out 50-0x20,r24
+ 218               	.LBE3:
+ 219               	.LBE2:
+  13:main.c        **** 	uint32_t i;
+  14:main.c        **** 	char *buf;
+  15:main.c        **** 	
+  16:main.c        **** 	init();
+  17:main.c        **** 
+  18:main.c        **** 	boot_page_erase(1);
+ 221               	.LM12:
+ 222 0044 23E0      		ldi r18,lo8(3)
+ 223 0046 81E0      		ldi r24,lo8(1)
+ 224 0048 90E0      		ldi r25,hi8(1)
+ 225 004a A0E0      		ldi r26,hlo8(1)
+ 226 004c B0E0      		ldi r27,hhi8(1)
+ 227               	/* #APP */
+ 228 004e FC01      		movw r30, r24
+ 229 0050 A093 5B00 		sts  91, r26
+ 230 0054 2093 6800 		sts 104, r18
+ 231 0058 E895      		spm
+ 232               		
+  19:main.c        **** 
+  20:main.c        **** 	i = 0 ; buf = 0;
+  21:main.c        **** 	boot_program_page(i, buf);
+ 234               	.LM13:
+ 235               	/* #NOAPP */
+ 236 005a 40E0      		ldi r20,lo8(0)
+ 237 005c 50E0      		ldi r21,hi8(0)
+ 238 005e 60E0      		ldi r22,lo8(0)
+ 239 0060 70E0      		ldi r23,hi8(0)
+ 240 0062 80E0      		ldi r24,hlo8(0)
+ 241 0064 90E0      		ldi r25,hhi8(0)
+ 242 0066 0E94 0000 		call boot_program_page
+ 243               	.L18:
+  22:main.c        **** 	
+  23:main.c        **** 	while(1)
+  24:main.c        **** 	{
+  25:main.c        **** 		delay_ms(100);
+ 245               	.LM14:
+ 246 006a 84E6      		ldi r24,lo8(100)
+ 247 006c 90E0      		ldi r25,hi8(100)
+ 248 006e 0E94 0000 		call delay_ms
+  26:main.c        **** 		PORTD = ~PORTD;
+ 250               	.LM15:
+ 251 0072 82B3      		in r24,50-0x20
+ 252 0074 8095      		com r24
+ 253 0076 82BB      		out 50-0x20,r24
+ 254 0078 00C0      		rjmp .L18
+ 255               	/* epilogue: frame size=0 */
+ 256               	/* epilogue: noreturn */
+ 257               	/* epilogue end (size=0) */
+ 258               	/* function main size 38 (34) */
+ 260               	.Lscope3:
+ 262               		.stabd	78,0,0
+ 264               	.Letext0:
+ 265               	/* File "main.c": code   67 = 0x0043 (  60), prologues   4, epilogues   3 */
+DEFINED SYMBOLS
+                            *ABS*:00000000 main.c
+     /tmp/ccvgE7KX.s:3      *ABS*:0000003f __SREG__
+     /tmp/ccvgE7KX.s:4      *ABS*:0000003e __SP_H__
+     /tmp/ccvgE7KX.s:5      *ABS*:0000003d __SP_L__
+     /tmp/ccvgE7KX.s:6      *ABS*:00000000 __tmp_reg__
+     /tmp/ccvgE7KX.s:7      *ABS*:00000001 __zero_reg__
+     /tmp/ccvgE7KX.s:96     .text:00000000 delay_us
+     /tmp/ccvgE7KX.s:131    .text:00000012 delay_ms
+     /tmp/ccvgE7KX.s:173    .text:0000002e init
+     /tmp/ccvgE7KX.s:199    .text:00000036 main
+
+UNDEFINED SYMBOLS
+__do_copy_data
+__do_clear_bss
+__stack
+boot_program_page

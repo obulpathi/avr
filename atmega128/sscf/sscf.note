@@ -1,0 +1,24 @@
+page 41 .. theres a note .. 
+Oscillator Calibration Register
+– OSCCAL
+watch it ... i dunno whast it is ...
+page 43 ... XDIV .. is the register we are interested in ... ;) 
+
+fclk = source_clk / ( 129 - div );
+
+source = 1 MHz
+f	-	xdiv
+10KHz 	- 	29
+20KHz 	- 	79
+33KHz	-	99
+50KHz	-	109
+100KHz	-	119
+200KHz	-	124
+333KHz	-	126
+500KHz	-	127
+1MHz	-	disable.
+
+Readings obtained are as follows ... from 10KHz to 1MHz.
+The readings won't change as expected from 500KHz to 1MHz ... actually the clk frequency is 1MHz ... so software frequency selection is disabled at this frequency ... due to this ... the reading does not change as expected.
+and another thing is ... I noted the reading down to 3 rd digit after decimal ... but the last digit ( 3 rd digit after decimal kept changing by two / three units .... for example the first reading was observed as 0.484 or 0.483 or 0.485 ... )
+

@@ -1,0 +1,27 @@
+In answer to the original question: There are two steps to storing the data, defining the data as being in program memory as part of a section, and then defining where that section resides. I do this in my bootloader, but you can adjust it for your use.
+
+Step 1 - defining your data for a specific section:
+Code:
+#define BOOTSTRING_SECTION   __attribute__ ((section (".bootstring")))
+
+const char boot_Version   [] BOOTSTRING_SECTION = "0.7";
+const char boot_Monitor   [] BOOTSTRING_SECTION = "DPHIMON ";
+const char boot_Prompt    [] BOOTSTRING_SECTION = "* ";
+
+Step 2 - defining where the section lives:
+Code:
+LDFLAGS += -Wl,--section-start=.bootstring=0x3FA00
+This second part is done in your makefile. If you are going to play this game, I strongly urge you to use the template makefile from WinAVR's Mfile app! If you are using AVRStudio, tell the project to use an external makefile.
+
+Important note!The linker section address above is in bytes but the addresses listed in your data sheet for the flash is in words! In my case (an ATmega2560) my strings are in very high memory.
+
+Hope this helps!
+
+Stu
+
+PS: If you are placing your data at any address larger than 64 KiB (that's bytes), you will need to use a little more complicated procedure to access that data. Post here and I will follow up with a note on how to do that.
+
+PPS: You might want to read [TUT] [C] GCC and the PROGMEM Attribute
+
+_________________
+Engineering seems to boil down to: Cheap. Fast. Good. Choose two.

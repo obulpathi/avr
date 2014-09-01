@@ -1,0 +1,3 @@
+ #define ISR(vector)
+
+#include <avr/interrupt.h>

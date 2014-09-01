@@ -1,0 +1,156 @@
+start simulavr ... 
+simulavr --gdbserver --device atmega128  &
+
+now start avrgdb ... 
+make gdbinit : ??? figure this out
+avr-gdb -x gdbinit-helloavr
+
+avr-gdb main.out
+target remote localhost:4242
+step from here onwards ... :)
+
+figure out how they are going to communicate ... 
+http://electrons.psychogenic.com/modules/arms/art/6/SimulatingandDebuggingAVRprograms.php
+yaar .. its giving some errors ... 
+chalo we will check it out later ... 
+Its working ... :)
+
+
+
+simulavr # simulavr --gdbserver --device atmega128  &
+[1] 14261
+simulavr #
+Simulating a atmega128 device.
+
+devsupp.c:332: MESSAGE: attach: IO Reg 'PINF' at 0x0020: created
+devsupp.c:332: MESSAGE: attach: IO Reg 'PINE' at 0x0021: created
+devsupp.c:316: MESSAGE: attach: IO Reg 'DDRE' at 0x0022: ref = 0x0021
+devsupp.c:316: MESSAGE: attach: IO Reg 'PORTE' at 0x0023: ref = 0x0021
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'ADCL' at 0x0024
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'ADCH' at 0x0025
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'ADCSRA' at 0x0026
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'ADMUX' at 0x0027
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'ACSR' at 0x0028
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'UBRR0L' at 0x0029
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'UCSR0B' at 0x002a
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'UCSR0A' at 0x002b
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'UDR0' at 0x002c
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'SPCR' at 0x002d
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'SPSR' at 0x002e
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'SPDR' at 0x002f
+devsupp.c:332: MESSAGE: attach: IO Reg 'PIND' at 0x0030: created
+devsupp.c:316: MESSAGE: attach: IO Reg 'DDRD' at 0x0031: ref = 0x0030
+devsupp.c:316: MESSAGE: attach: IO Reg 'PORTD' at 0x0032: ref = 0x0030
+devsupp.c:332: MESSAGE: attach: IO Reg 'PINC' at 0x0033: created
+devsupp.c:316: MESSAGE: attach: IO Reg 'DDRC' at 0x0034: ref = 0x0033
+devsupp.c:316: MESSAGE: attach: IO Reg 'PORTC' at 0x0035: ref = 0x0033
+devsupp.c:332: MESSAGE: attach: IO Reg 'PINB' at 0x0036: created
+devsupp.c:316: MESSAGE: attach: IO Reg 'DDRB' at 0x0037: ref = 0x0036
+devsupp.c:316: MESSAGE: attach: IO Reg 'PORTB' at 0x0038: ref = 0x0036
+devsupp.c:332: MESSAGE: attach: IO Reg 'PINA' at 0x0039: created
+devsupp.c:316: MESSAGE: attach: IO Reg 'DDRA' at 0x003a: ref = 0x0039
+devsupp.c:316: MESSAGE: attach: IO Reg 'PORTA' at 0x003b: ref = 0x0039
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'SFIOR' at 0x0040
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'WDTCR' at 0x0041
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'OCDR' at 0x0042
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'OCR2' at 0x0043
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'TCNT2' at 0x0044
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'TCCR2' at 0x0045
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'ICR1L' at 0x0046
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'ICR1H' at 0x0047
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'OCR1BL' at 0x0048
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'OCR1BH' at 0x0049
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'OCR1AL' at 0x004a
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'OCR1AH' at 0x004b
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'TCNT1L' at 0x004c
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'TCNT1H' at 0x004d
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'TCCR1B' at 0x004e
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'TCCR1A' at 0x004f
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'ASSR' at 0x0050
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'OCR0' at 0x0051
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'TCNT0' at 0x0052
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'TCCR0' at 0x0053
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'MCUCSR' at 0x0054
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'MCUCR' at 0x0055
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'TIFR' at 0x0056
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'TIMSK' at 0x0057
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'EIFR' at 0x0058
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'EIMSK' at 0x0059
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'EICRB' at 0x005a
+devsupp.c:332: MESSAGE: attach: IO Reg 'RAMPZ' at 0x005b: created
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'XDIV' at 0x005c
+devsupp.c:332: MESSAGE: attach: IO Reg 'SPL' at 0x005d: created
+devsupp.c:316: MESSAGE: attach: IO Reg 'SPH' at 0x005e: ref = 0x005d
+devsupp.c:332: MESSAGE: attach: IO Reg 'SREG' at 0x005f: created
+devsupp.c:316: MESSAGE: attach: IO Reg 'DDRF' at 0x0061: ref = 0x0020
+devsupp.c:316: MESSAGE: attach: IO Reg 'PORTF' at 0x0062: ref = 0x0020
+devsupp.c:332: MESSAGE: attach: IO Reg 'PING' at 0x0063: created
+devsupp.c:316: MESSAGE: attach: IO Reg 'DDRG' at 0x0064: ref = 0x0063
+devsupp.c:316: MESSAGE: attach: IO Reg 'PORTG' at 0x0065: ref = 0x0063
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'SPMCSR' at 0x0068
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'EICRA' at 0x006a
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'XMCRB' at 0x006c
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'XMCRA' at 0x006d
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'OSCCAL' at 0x006f
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'TWBR' at 0x0070
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'TWSR' at 0x0071
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'TWAR' at 0x0072
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'TWDR' at 0x0073
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'TWCR' at 0x0074
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'OCR1CL' at 0x0078
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'OCR1CH' at 0x0079
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'TCCR1C' at 0x007a
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'ETIFR' at 0x007c
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'ETIMSK' at 0x007d
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'ICR3L' at 0x0080
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'ICR3H' at 0x0081
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'OCR3CL' at 0x0082
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'OCR3CH' at 0x0083
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'OCR3BL' at 0x0084
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'OCR3BH' at 0x0085
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'OCR3AL' at 0x0086
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'OCR3AH' at 0x0087
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'TCNT3L' at 0x0088
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'TCNT3H' at 0x0089
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'TCCR3B' at 0x008a
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'TCCR3A' at 0x008b
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'TCCR3C' at 0x008c
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'UBRR0H' at 0x0090
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'UCSR0C' at 0x0095
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'UBRR1H' at 0x0098
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'UBRR1L' at 0x0099
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'UCSR1B' at 0x009a
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'UCSR1A' at 0x009b
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'UDR1' at 0x009c
+devsupp.c:338: MESSAGE: TODO: attach IO Reg 'UCSR1C' at 0x009d
+avrcore.c:475: MESSAGE: attach: Internal SRAM from 0x0100 to 0x10ff
+decoder.c:3875: MESSAGE: generating opcode lookup_table
+main.c:415: MESSAGE: Simulating clock frequency of 8000000 Hz
+Waiting on port 1212 for gdb client to connect...
+
+
+
+simulavr # make gdbinit
+
+Use 'avr-gdb -x gdbinit-simulavr'
+
+
+simulavr # avr-gdb -x gdbinit-simulavr
+GNU gdb 6.4
+Copyright 2005 Free Software Foundation, Inc.
+GDB is free software, covered by the GNU General Public License, and you are
+welcome to change it and/or distribute copies of it under certain conditions.
+Type "show copying" to see the conditions.
+There is absolutely no warranty for GDB.  Type "show warranty" for details.
+This GDB was configured as "--host=i486-linux-gnu --target=avr".
+Connection opened by host 127.0.0.1, port 4758.
+0x00000000 in __vectors ()
+Loading section .text, size 0xe2 lma 0x0
+Start address 0x0, load size 226
+Transfer rate: 1808 bits in <1 sec, 113 bytes/write.
+Breakpoint 1 at 0xda: file main.c, line 13.
+decoder.c:737: MESSAGE: BREAK POINT: PC = 0x0000006d: clock = 36
+
+Breakpoint 1, main () at main.c:13
+13              DDRD = 0xFF;
+

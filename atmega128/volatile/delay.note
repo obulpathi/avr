@@ -1,0 +1,6 @@
+Note:
+    When using _delay_us() and _delay_ms(), the expressions passed as arguments to
+    these functions shall be compile-time constants, otherwise the ?oating-point cal-
+    culations to setup the loops will be done at run-time, thereby drastically increasing
+    both the resulting code size, as well as the time required to setup the loops.
+

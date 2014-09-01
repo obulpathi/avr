@@ -1,0 +1,4 @@
+avrdude -P usb -B 10 -c stk500v2 -p atmega32 -U flash:w:rom.hex:i
+avrdude -P usb -B 10 -c stk500 -p atmega32 -U flash:w:rom.hex:i
+
+// uisp -dprog=stk500 -dpart=atmega32 -dserial=/dev/ttyUSB0 --erase --upload

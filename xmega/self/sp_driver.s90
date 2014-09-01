@@ -1,0 +1,845 @@
+;******************************************************************************
+;*
+;* XMEGA Self-programming driver assembly source file.
+;*
+;*      This file contains the low-level implementations for the
+;*      XMEGA Self-programming driver. It is written for the IAR Assembler.
+;*
+;*      If any SPM instructions are used, the linker file must define
+;*      a segment named Boot which must be located in the device Boot section.
+;*
+;*      None of these routines clean up the NVM Command Register after use.
+;*      It is therefore important to write NVM_CMD_NO_OPERATION_gc (0x00) to this
+;*      register when you are finished using any of the functions in this driver.
+;*
+;*      For all routines, it is important that any interrupt handlers do not
+;*      perform any NVM operations. The user must implement a scheme for mutually
+;*      exclusive access to the NVM. However, the 4-cycle timeout will work fine,
+;*      since writing to the Configuration Change Protection register (CCP)
+;*      automatically disables interrupts for 4 instruction cycles.
+;*
+;*      Note on IAR calling convention:
+;*         Scratch registers:   R0-R3, R16-R23, R30-R31
+;*         Preserved registers: R4-R15, R24-R27
+;*         Parameter registers: R16-R23 (1-, 2- or 4-byte alignment)
+;*         Return registers:    R16-R19
+;*
+;* Application note:
+;*      AVR1316: XMEGA Self-programming
+;*
+;* Documentation
+;*      For comprehensive code documentation, supported compilers, compiler
+;*      settings and supported devices see readme.html
+;*
+;*      Atmel Corporation: http:;www.atmel.com \n
+;*      Support email: avr@atmel.com
+;*
+;* $Revision: 1687 $
+;* $Date: 2008-07-29 13:06:33 +0200 (ti, 29 jul 2008) $
+;*
+;* Copyright (c) 2007, Atmel Corporation All rights reserved.
+;*
+;* Redistribution and use in source and binary forms, with or without
+;* modification, are permitted provided that the following conditions are met:
+;*
+;* 1. Redistributions of source code must retain the above copyright notice,
+;* this list of conditions and the following disclaimer.
+;*
+;* 2. Redistributions in binary form must reproduce the above copyright notice,
+;* this list of conditions and the following disclaimer in the documentation
+;* and/or other materials provided with the distribution.
+;*
+;* 3. The name of ATMEL may not be used to endorse or promote products derived
+;* from this software without specific prior written permission.
+;*
+;* THIS SOFTWARE IS PROVIDED BY ATMEL "AS IS" AND ANY EXPRESS OR IMPLIED
+;* WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+;* MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE EXPRESSLY AND
+;* SPECIFICALLY DISCLAIMED. IN NO EVENT SHALL ATMEL BE LIABLE FOR ANY DIRECT,
+;* INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+;* (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+;* LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+;* ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+;* (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+;* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+;******************************************************************************
+
+#include <ioavr.h>
+
+/* Define the size of the flash page if not defined in the header files. */
+#ifndef FLASH_PAGE_SIZE
+	#error  FLASH_PAGE_SIZE must be defined if not defined in header files.
+	//#define FLASH_PAGE_SIZE 512
+#endif /*FLASH_PAGE_SIZE*/
+
+; ---
+; This routine reads a byte from flash given by the address in
+; R19:R18:R17:R16.
+;
+; Input:
+;     R19:R18:R17:R16.
+;
+; Returns:
+;     R16 - Read byte.
+; ---
+MODULE _SP_ReadByte
+PUBLIC SP_ReadByte
+RSEG CODE
+//#include <ioavr.h>  //Workaround for include at beginning of file.
+
+SP_ReadByte:
+	in	r20, RAMPZ        ; Save RAMPZ.
+	out	RAMPZ, r18        ; Load RAMPZ with the MSB of the address.
+	movw	ZH:ZL, r17:r16    ; Move the low bytes to the Z pointer
+	elpm	r16, Z            ; Extended load byte from address pointed to by Z.
+	out	RAMPZ, r20        ; Restore RAMPZ register.
+	ret
+	
+ENDMOD
+
+
+
+; ---
+; This routine reads a word from flash given by the address in
+; R19:R18:R17:R16.
+;
+; Input:
+;     R19:R18:R17:R16.
+;
+; Returns:
+;     R17:R16 - Read word.
+; ---
+MODULE _SP_ReadWord
+PUBLIC SP_ReadWord
+RSEG CODE
+#include <ioavr.h>
+
+SP_ReadWord:
+	in	r20, RAMPZ      ; Save RAMPZ.
+	out	RAMPZ, r18      ; Load RAMPZ with the MSB of the address.
+	movw	ZH:ZL, r17:r16  ; Move the low bytes to the Z pointer
+	elpm	r16, Z+         ; Extended load byte from address pointed to by Z.
+	elpm	r17, Z          ; Extended load byte from address pointed to by Z.
+	out	RAMPZ, r20      ; Restore RAMPZ register.
+	ret
+	
+ENDMOD
+
+
+
+; ---
+; This routine reads the calibration byte given by the index in R16.
+;
+; Input:
+;     R16 - Byte index.
+;
+; Returns:
+;     R16 - Calibration byte.
+; ---
+MODULE _SP_ReadCalibrationByte
+EXTERN SP_CommonLPM
+PUBLIC SP_ReadCalibrationByte
+RSEG CODE
+#include <ioavr.h>
+	
+SP_ReadCalibrationByte:
+	ldi	r20, NVM_CMD_READ_CALIB_ROW_gc    ; Prepare NVM command in R20.
+	rjmp	SP_CommonLPM                      ; Jump to common LPM code.
+
+ENDMOD
+
+
+
+; ---
+; This routine reads the user signature byte given by the index in R17:R16.
+;
+; Input:
+;     R17:R16 - Byte index.
+;
+; Returns:
+;     R16 - Signature byte.
+; ---
+MODULE _SP_ReadUserSignatureByte
+EXTERN SP_CommonLPM
+PUBLIC SP_ReadUserSignatureByte
+RSEG CODE
+#include <ioavr.h>	
+
+SP_ReadUserSignatureByte:
+	ldi	r20, NVM_CMD_READ_USER_SIG_ROW_gc  ; Prepare NVM command in R20.
+	rjmp	SP_CommonLPM                       ; Jump to common LPM code.
+
+ENDMOD
+
+
+
+; ---
+; This routine reads the fuse byte given by the index in R16.
+;
+; Input:
+;     R16 - Byte index.
+;
+; Returns:
+;     R16 - Fuse byte.
+; ---
+MODULE _SP_ReadFuseByte
+EXTERN SP_CommonCMD
+PUBLIC SP_ReadFuseByte
+RSEG CODE
+#include <ioavr.h>	
+	
+SP_ReadFuseByte:
+	sts	NVM_ADDR0, r16              ; Load fuse byte index into NVM Address Register 0.
+	clr	r16                         ; Prepare a zero.
+	sts	NVM_ADDR1, r16              ; Load zero into NVM Address Register 1.
+	sts	NVM_ADDR2, r16              ; Load zero into NVM Address Register 2.
+	ldi	r20, NVM_CMD_READ_FUSES_gc  ; Prepare NVM command in R20.
+	rjmp	SP_CommonCMD                ; Jump to common NVM Action code.
+
+ENDMOD
+
+
+
+; ---
+; This routine sets the lock bits from R16. Note that unlocking is only
+; possible by doing a full chip erase, not available from software.
+;
+; Input:
+;     R16 - Lock bits.
+;
+; Returns:
+;     Nothing.
+; ---
+MODULE _SP_WriteLockBits
+EXTERN SP_CommonCMD
+PUBLIC SP_WriteLockBits
+RSEG CODE
+#include <ioavr.h>	
+
+SP_WriteLockBits:
+	sts	NVM_DATA0, r16                  ; Load lock bits into NVM Data Register 0.
+	ldi	r20, NVM_CMD_WRITE_LOCK_BITS_gc ; Prepare NVM command in R20.
+	rjmp	SP_CommonCMD                    ; Jump to common NVM Action code.
+
+ENDMOD
+
+
+
+; ---
+; This routine reads the lock bits.
+;
+; Input:
+;     Nothing.
+;
+; Returns:
+;     R16 - Lock bits.
+; ---
+MODULE _SP_ReadLockBits
+PUBLIC SP_ReadLockBits
+RSEG CODE
+#include <ioavr.h>		
+
+SP_ReadLockBits:
+	lds	r16, NVM_LOCKBITS       ; Read IO-mapped lock bits.
+	ret
+
+ENDMOD
+
+
+
+; ---
+; This routine erases the user signature row.
+;
+; Input:
+;     Nothing.
+;
+; Returns:
+;     Nothing.
+; ---
+MODULE _SP_EraseUserSignatureRow
+EXTERN SP_CommonSPM
+PUBLIC SP_EraseUserSignatureRow
+RSEG CODE
+#include <ioavr.h>
+	
+SP_EraseUserSignatureRow:
+	in	r23, RAMPZ                         ; Save RAMPZ, which is restored in SP_CommonSPM.
+	ldi	r20, NVM_CMD_ERASE_USER_SIG_ROW_gc ; Prepare NVM command in R20.
+	jmp 	SP_CommonSPM                       ; Jump to common SPM code.
+
+ENDMOD
+
+
+
+; ---
+; This routine writes the flash buffer to the user signature row.
+;
+; Input:
+;     Nothing.
+;
+; Returns:
+;     Nothing.
+; ---
+MODULE _SP_WriteUserSignatureRow
+EXTERN SP_CommonSPM
+PUBLIC SP_WriteUserSignatureRow
+RSEG CODE
+#include <ioavr.h>
+	
+SP_WriteUserSignatureRow:
+	in	r23, RAMPZ                          ; Save RAMPZ, which is restored in SP_CommonSPM.
+	ldi	r20, NVM_CMD_WRITE_USER_SIG_ROW_gc  ; Prepare NVM command in R20.
+	jmp	SP_CommonSPM                        ; Jump to common SPM code.
+
+ENDMOD
+
+
+
+; ---
+; This routine erases the entire application section.
+;
+; Input:
+;     Nothing.
+;
+; Returns:
+;     Nothing.
+; ---
+MODULE _SP_EraseApplicationSection
+EXTERN SP_CommonSPM
+PUBLIC SP_EraseApplicationSection
+RSEG CODE
+#include <ioavr.h>
+	
+SP_EraseApplicationSection:
+	in	r23, RAMPZ                 ; Save RAMPZ, which is restored in SP_CommonSPM.
+	ldi	r20, NVM_CMD_ERASE_APP_gc  ; Prepare NVM command in R20.
+	jmp	SP_CommonSPM               ; Jump to common SPM code.
+
+ENDMOD
+
+
+; ---
+; This routine erases the page at address R19:R18:R17:R16 in the application
+; section. The address can point anywhere inside the page.
+;
+; Input:
+;     R19:R18:R17:R16 - Byte address into Flash page.
+;
+; Returns:
+;     Nothing.
+; ---
+MODULE _SP_EraseApplicationPage
+EXTERN SP_CommonSPM
+PUBLIC SP_EraseApplicationPage
+RSEG CODE
+#include <ioavr.h>	
+	
+SP_EraseApplicationPage:
+	in	r23, RAMPZ                      ; Save RAMPZ, which is restored in SP_CommonSPM.
+	out	RAMPZ, r18                      ; Load RAMPZ with the MSB of the address.
+	ldi	r20, NVM_CMD_ERASE_APP_PAGE_gc  ; Prepare NVM command in R20.
+	jmp	SP_CommonSPM                    ; Jump to common SPM code.
+
+ENDMOD
+
+
+
+; ---
+; This routine writes the word from R19:R18 into the Flash page buffer at
+; address R17:R16.
+;
+; Input:
+;     R17:R16 - Byte address into Flash page.
+;     R19:R18 - Word to write.
+;
+; Returns:
+;     Nothing.
+; ---
+MODULE _SP_LoadFlashWord
+EXTERN SP_CommonSPM
+PUBLIC SP_LoadFlashWord
+RSEG CODE
+#include <ioavr.h>
+
+SP_LoadFlashWord:
+	in	r23, RAMPZ                         ; Save RAMPZ, which is restored in SP_CommonSPM.
+	movw	r1:r0, r19:r18                     ; Prepare flash word in R1:R0.
+	ldi	r20, NVM_CMD_LOAD_FLASH_BUFFER_gc  ; Prepare NVM command in R20.
+	jmp	SP_CommonSPM                       ; Jump to common SPM code.
+
+ENDMOD
+
+
+
+; ---
+; This routine writes an entire page from the SRAM buffer at
+; address R17:R16 into the Flash page buffer.
+;
+; Input:
+;     R17:R16 - 16-bit pointer to SRAM buffer.
+;
+; Returns:
+;     Nothing.
+; ---
+MODULE _SP_LoadFlashPage
+PUBLIC SP_LoadFlashPage
+RSEG BOOT
+#include <ioavr.h>		
+
+SP_LoadFlashPage:
+	clr	ZL              ; Clear low byte of Z, to indicate start of page.
+	clr	ZH              ; Clear high byte of Z, to indicate start of page.
+	movw	r3:r2, XH:XL    ; Save X to R3:R2 for later restore.
+
+	ldi	r18, 0x00
+	out	RAMPX, r18      ; Clear RAMPX pointer.
+	movw	XH:XL, r17:r16  ; Load X with data buffer address.
+
+	ldi 	r20, NVM_CMD_LOAD_FLASH_BUFFER_gc  ; Prepare NVM command code in R20.
+	sts	NVM_CMD, r20                       ; Load it into NVM command register.
+	
+#if FLASH_PAGE_SIZE > 512
+	ldi	r22, ((FLASH_PAGE_SIZE/2) >> 8)
+#endif
+	ldi	r21, ((FLASH_PAGE_SIZE/2)&0xFF)    ; Load R21 with page word count.
+	ldi	r16, CCP_SPM_gc                    ; Prepare Protect SPM signature in R16.
+
+SP_LoadFlashPage_1:
+	ld	r0, X+         ; Load low byte from buffer into R0.
+	ld	r1, X+         ; Load high byte from buffer into R1.
+	sts	CCP, r16       ; Enable SPM operation (this disables interrupts for 4 cycles).
+	spm                    ; Self-program.
+	adiw	ZH:ZL, 2       ; Move Z to next Flash word.
+	
+#if FLASH_PAGE_SIZE > 512
+	subi	r21, 1         ; Decrement word count.
+	sbci	r22, 0
+#else
+	dec	r21            ; Decrement word count.
+#endif
+
+	brne	SP_LoadFlashPage_1   ; Repeat until word cont is zero.
+
+	movw	XH:XL, r3:r2         ; Restore old X from R3:R2.
+	ret
+
+ENDMOD
+
+
+
+; ---
+; This routine reads an entire Flash page from address R17:R16 into the
+; SRAM buffer at address R19:R18.
+;
+;
+; Input:
+;     R23:R22:R21:R20 - Flash byte address.
+;     R17:R16 - 16-bit pointer to SRAM buffer.
+;
+; Returns:
+;     Nothing.
+; ---
+MODULE _SP_ReadFlashPage
+PUBLIC SP_ReadFlashPage
+RSEG CODE
+#include <ioavr.h>	
+
+SP_ReadFlashPage:
+
+	movw	r3:r2, XH:XL                 ; Save X to R3:R2 for later restore.
+	in	r23, RAMPZ                   ; Save RAMPZ during assembly.
+
+	out	RAMPZ, r22                   ; Load RAMPZ with address
+	movw    ZH:ZL, r21:r20               ; Load Z with Flash address.
+
+	clr	r18
+	out	RAMPX, r18                   ; Load RAMPX with data pointer
+
+	movw	XH:XL, r17:r16               ; Load X with data buffer address.
+	ldi	r20, NVM_CMD_NO_OPERATION_gc ; Prepare NVM command code in R20.
+	sts	NVM_CMD, r20                 ; Set NVM command to No Operation so that LPM reads Flash.
+
+#if FLASH_PAGE_SIZE > 512
+	ldi	r22, ((FLASH_PAGE_SIZE/2) >> 8) ; Load R22 with byte cont high if flash page is large.
+#endif	
+
+	ldi	r21, ((FLASH_PAGE_SIZE)&0xFF)   ; Load R21 with byte count.
+
+SP_ReadFlashPage_1:
+	elpm	r16, Z+                         ; Load Flash bytes into R16:r17
+	elpm	r17, Z+
+	st	X+, r16                         ; Write bytes to buffer.
+	st	X+, r17
+	
+#if FLASH_PAGE_SIZE > 512
+	subi	r21, 1                          ; Decrement word count.
+	sbci	r22, 0
+#else
+	dec		r21                     ; Decrement word count.
+#endif	
+
+	brne	SP_ReadFlashPage_1              ; Repeat until byte count is zero.
+
+	out	RAMPZ, r23                      ; Restore RAMPZ
+	movw	XH:XL, r3:r2                    ; Restore old X from R3:R2.
+	ret
+
+ENDMOD
+
+
+
+; ---
+; This routine writes the page buffer to the Flash page at address R19:R18:R17:R16
+; in the application section. The address can point anywhere inside the page.
+;
+; Input:
+;     R19:R18:R17:R16 - Byte address into Flash page.
+;
+; Returns:
+;     Nothing.
+; ---
+MODULE _SP_WriteApplicationPage
+EXTERN SP_CommonSPM
+PUBLIC SP_WriteApplicationPage
+RSEG CODE
+#include <ioavr.h>		
+
+SP_WriteApplicationPage:
+	in	r23, RAMPZ                       ; Save RAMPZ, which is restored in SP_CommonSPM.
+	out	RAMPZ, r18
+	ldi	r20, NVM_CMD_WRITE_APP_PAGE_gc   ; Prepare NVM command in R20.
+	jmp	SP_CommonSPM                     ; Jump to common SPM code.
+
+ENDMOD
+
+
+
+; ---
+; This routine erases first and then writes the page buffer to the
+; Flash page at address R19:R18:R17:R16 in the application section. The address
+; can point anywhere inside the page.
+;
+; Input:
+;     R19:R18:R17:R16 - Byte address into Flash page.
+;
+; Returns:
+;     Nothing.
+; ---
+MODULE _SP_EraseWriteApplicationPage
+EXTERN SP_CommonSPM
+PUBLIC SP_EraseWriteApplicationPage
+RSEG CODE
+#include <ioavr.h>		
+
+SP_EraseWriteApplicationPage:
+	in	r23, RAMPZ                            ; Save RAMPZ, which is restored in SP_CommonSPM.
+	out	RAMPZ, r18
+	ldi	r20, NVM_CMD_ERASE_WRITE_APP_PAGE_gc  ; Prepare NVM command in R20.
+	jmp	SP_CommonSPM                          ; Jump to common SPM code.
+
+ENDMOD
+
+
+
+; ---
+; This routine flushes the Flash page buffer.
+;
+; Input:
+;     Nothing.
+;
+; Returns:
+;     Nothing.
+; ---
+MODULE _SP_EraseFlashBuffer
+EXTERN SP_CommonSPM
+PUBLIC SP_EraseFlashBuffer
+RSEG CODE
+#include <ioavr.h>		
+	
+SP_EraseFlashBuffer:
+	in	r23, RAMPZ                          ; Save RAMPZ, which is restored in SP_CommonSPM.
+	ldi	r20, NVM_CMD_ERASE_FLASH_BUFFER_gc  ; Prepare NVM command in R20.
+	jmp	SP_CommonSPM                        ; Jump to common SPM code.
+
+ENDMOD
+
+
+
+; ---
+; This routine erases the page at address R19:R18:R17:R16 in the Boot section. The
+; address can point anywhere inside the page.
+;
+; Input:
+;     R19:R18:R17:R16 - Byte address into Flash page.
+;
+; Returns:
+;     Nothing.
+; ---
+MODULE _SP_EraseBootPage
+EXTERN SP_CommonSPM
+PUBLIC SP_EraseBootPage
+RSEG CODE
+#include <ioavr.h>		
+	
+SP_EraseBootPage:
+	in	r23, RAMPZ                         ; Save RAMPZ, which is restored in SP_CommonSPM.
+	out	RAMPZ, r18
+	ldi	r20, NVM_CMD_ERASE_BOOT_PAGE_gc    ; Prepare NVM command in R20.
+	jmp	SP_CommonSPM                       ; Jump to common SPM code.
+
+ENDMOD
+
+
+; ---
+; This routine writes the page buffer to the Flash page at address R19:R18:R17:R16
+; in the BOOT section. The address can point anywhere inside the page.
+;
+; Input:
+;     R19:R18:R17:R16 - Byte address into Flash page.
+;
+; Returns:
+;     Nothing.
+; ---
+MODULE _SP_WriteBootPage
+EXTERN SP_CommonSPM
+PUBLIC SP_WriteBootPage
+RSEG CODE
+#include <ioavr.h>		
+
+SP_WriteBootPage:
+	in	r23, RAMPZ                       ; Save RAMPZ, which is restored in SP_CommonSPM.
+	out	RAMPZ, r18
+	ldi	r20, NVM_CMD_WRITE_BOOT_PAGE_gc  ; Prepare NVM command in R20.
+	jmp	SP_CommonSPM                     ; Jump to common SPM code.
+
+ENDMOD
+
+
+
+; ---
+; This routine erases first and then writes the page buffer to the
+; Flash page at address R19:R18:R17:R16 in the Boot section. The address
+; can point anywhere inside the page.
+;
+; Input:
+;     R19:R18:R17:R16 - Byte address into Flash page.
+;
+; Returns:
+;     Nothing.
+; ---
+MODULE _SP_EraseWriteBootPage
+EXTERN SP_CommonSPM
+PUBLIC SP_EraseWriteBootPage
+RSEG CODE
+#include <ioavr.h>		
+
+SP_EraseWriteBootPage:
+	in	r23, RAMPZ                             ; Save RAMPZ, which is restored in SP_CommonSPM.
+	out	RAMPZ, r18
+	ldi	r20, NVM_CMD_ERASE_WRITE_BOOT_PAGE_gc  ; Prepare NVM command in R20.
+	jmp	SP_CommonSPM                           ; Jump to common SPM code.
+
+ENDMOD
+
+
+
+; ---
+; This routine calculates a CRC for the application section.
+;
+; Input:
+;     Nothing.
+;
+; Returns:
+;     R19:R18:R17:R16 - 32-bit CRC result (actually only 24-bit used).
+; ---
+MODULE _SP_ApplicationCRC
+EXTERN SP_CommonCMD
+PUBLIC SP_ApplicationCRC
+RSEG CODE
+#include <ioavr.h>	
+
+SP_ApplicationCRC:
+	ldi	r20, NVM_CMD_APP_CRC_gc    ; Prepare NVM command in R20.
+	rjmp	SP_CommonCMD               ; Jump to common NVM Action code.
+
+ENDMOD
+
+
+
+; ---
+; This routine calculates a CRC for the Boot section.
+;
+; Input:
+;     Nothing.
+;
+; Returns:
+;     R19:R18:R17:R16 - 32-bit CRC result (actually only 24-bit used).
+; ---
+MODULE _SP_BootCRC
+EXTERN SP_CommonCMD
+PUBLIC SP_BootCRC
+RSEG CODE
+#include <ioavr.h>
+	
+SP_BootCRC:
+	ldi	r20, NVM_CMD_BOOT_CRC_gc   ; Prepare NVM command in R20.
+	rjmp	SP_CommonCMD               ; Jump to common NVM Action code.
+
+ENDMOD
+
+
+
+; ---
+; This routine locks all further access to SPM operations until next reset.
+;
+; Input:
+;     Nothing.
+;
+; Returns:
+;     Nothing.
+; ---
+MODULE _SP_LockSPM
+PUBLIC SP_LockSPM
+RSEG CODE
+#include <ioavr.h>		
+
+SP_LockSPM:
+	ldi	r18, CCP_IOREG_gc     ; Prepare Protect IO-register signature in R18.
+	sts	CCP, r18              ; Enable IO-register operation (this disables interrupts for 4 cycles).
+	ldi	r18, NVM_SPMLOCK_bm   ; Prepare bitmask for locking SPM into R18.
+	sts	NVM_CTRLB, r18        ; Load bitmask into NVM Control Register B, which locks SPM.
+	ret
+	
+ENDMOD
+
+
+
+; ---
+; This routine wait for the SPM to finish and clears the command register.
+;
+; Note that this routine is blocking, and will halt any execution until the SPM
+; is finished.
+;
+; Input:
+;     Nothing.
+;
+; Returns:
+;     Nothing.
+; ---
+MODULE _SP_WaitForSPM
+PUBLIC SP_WaitForSPM
+RSEG CODE
+#include <ioavr.h>		
+
+SP_WaitForSPM:
+	lds	r16, NVM_STATUS     ; Load the NVM Status register.
+	sbrc	r16, NVM_NVMBUSY_bp ; Check if bit is cleared.
+	rjmp	SP_WaitForSPM       ; Repeat check if bit is not cleared.
+	clr	r16
+	sts	NVM_CMD, r16        ; Clear up command register to NO_OPERATION.
+	ret
+	
+ENDMOD
+
+
+
+; ---
+; This routine is called by several other routines, and contains common code
+; for executing an NVM command, including the return statement itself.
+;
+; If the operation (NVM command) requires the NVM Address registers to be
+; prepared, this must be done before jumping to this routine.
+;
+; Note that R19:R18:R17:R16 is used for returning results, even if the
+; C-domain calling function only expects a single byte or even void.
+;
+; Input:
+;     R20 - NVM Command code.
+;
+; Returns:
+;     R19:R18:R17:R16 - 32-bit result from NVM operation.
+; ---
+MODULE _SP_CommonCMD
+PUBLIC SP_CommonCMD
+RSEG CODE
+#include <ioavr.h>		
+
+SP_CommonCMD:
+	sts	NVM_CMD, r20        ; Load command into NVM Command register.
+	ldi	r16, CCP_IOREG_gc   ; Prepare Protect IO-register signature in R16.
+	ldi	r17, NVM_CMDEX_bm   ; Prepare bitmask for setting NVM Command Execute bit into R17.
+	sts	CCP, r16            ; Enable IO-register operation (this disables interrupts for 4 cycles).
+	sts	NVM_CTRLA, r17      ; Load bitmask into NVM Control Register A, which executes the command.
+	lds	r16, NVM_DATA0      ; Load NVM Data Register 0 into R16.
+	lds	r17, NVM_DATA1      ; Load NVM Data Register 1 into R17.
+	lds	r18, NVM_DATA2      ; Load NVM Data Register 2 into R18.
+	clr	r19                 ; Clear R19 in order to return a clean 32-bit value.
+	ret
+
+ENDMOD
+
+
+
+; ---
+; This routine is called by several other routines, and contains common code
+; for executing an LPM command, including the return statement itself.
+;
+; Note that R16 is used for returning results, even if the
+; C-domain calling function expects a void.
+;
+; Input:
+;     R17:R16 - Low bytes of Z pointer.
+;     R20     - NVM Command code.
+;
+; Returns:
+;     R16     - Result from LPM operation.
+; ---
+MODULE _SP_CommonLPM
+PUBLIC SP_CommonLPM
+RSEG CODE
+#include <ioavr.h>		
+
+SP_CommonLPM:
+	movw	ZH:ZL, r17:r16  ; Load index into Z.
+	sts	NVM_CMD, r20    ; Load prepared command into NVM Command register.
+	lpm	r16, Z          ; Load requested data into R16.
+	ret
+
+ENDMOD
+
+
+; ---
+; This routine is called by several other routines, and contains common code
+; for executing an SPM command, including the return statement itself.
+;
+; If the operation (SPM command) requires the R1:R0 registers to be
+; prepared, this must be done before jumping to this routine.
+;
+; Input:
+;     R1:R0    - Optional input to SPM command.
+;     R17:R16  - Low bytes of Z pointer.
+;     R20      - NVM Command code.
+;
+; Returns:
+;     Nothing.
+; ---
+MODULE _SP_CommonSPM
+PUBLIC SP_CommonSPM
+RSEG BOOT
+#include <ioavr.h>		
+
+SP_CommonSPM:
+	movw	ZH:ZL, r17:r16   ; Load R17:R16 into Z.
+	sts	NVM_CMD, r20     ; Load prepared command into NVM Command register.
+	ldi	r16, CCP_SPM_gc  ; Prepare Protect SPM signature in R16.
+	sts	CCP, r16         ; Enable SPM operation (this disables interrupts for 4 cycles).
+	spm                      ; Self-program.
+	out	RAMPZ, r23
+	ret
+	
+ENDMOD
+
+
+END
+	
+; END OF FILE

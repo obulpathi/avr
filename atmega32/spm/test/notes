@@ -1,0 +1,25 @@
+http://www.nongnu.org/avr-libc/user-manual/FAQ.html#faq_reloc_code
+
+// page size = 64 words = 128 bytes
+//  boot fuses 11 : 256 words	: 0x3F00
+//  boot fuses 10 : 512 words	: 0x3E00
+//  boot fuses 01 : 1024 words	: 0x3C00
+//  boot fuses 00 : 2048 words	: 0x3800
+
+
+How do I relocate code to a fixed address?
+First, the code should be put into a new named section. This is done with a section attribute:
+
+__attribute__ ((section (".bootloader")))
+
+In this example, .bootloader is the name of the new section. This attribute needs to be placed after the prototype of any function to force the function into the new section.
+
+void boot(void) __attribute__ ((section (".bootloader")));
+
+To relocate the section to a fixed address the linker flag --section-start is used. This option can be passed to the linker using the -Wl compiler option:
+
+-Wl,--section-start=.bootloader=0x1E000
+
+The name after section-start is the name of the section to be relocated. The number after the section name is the beginning address of the named section.
+
+avr-gcc -g -Wall -Os -Wstrict-prototypes -Wa,-adhlmsn=main.lst  -mmcu=atmega32    -c -o main.o main.c

@@ -1,0 +1,5 @@
+avrdis is a disassembler for atmel avr.
+usage : "avrdis rom.hex > out.asm"
+
+also try vavrdisasm 
+path : /mnt/data/soft/avr/vavrdisasm/

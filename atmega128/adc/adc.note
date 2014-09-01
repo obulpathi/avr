@@ -1,0 +1,7 @@
+Interface explanation:
+	adc_init() ... initialize the adc ...
+	adc_read() ... returns the result of the adc conversion ...
+
+Connections:
+	Make sure that you connect AVCC and AREF to 5V, with a 104 ( 0.1 uF) capacitor between AREF and GND.
+	Connect the analog input to the ADC0 channel.

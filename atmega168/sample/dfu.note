@@ -1,0 +1,23 @@
+why dfu?
+  dirt cheap
+  usb based
+  no need for external power
+
+check the connector ... 
+check the 
+other useful stuff ...
+  flip
+  tuxup
+
+pins used :
+  all usb pins
+  vcc
+  gnd
+  reset
+  HWB aka portd 7 th pin
+
+how to program:
+  reset the microntroller
+  force HWB to 0/1??
+  start dfu ... 
+  done ... 

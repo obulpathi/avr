@@ -1,0 +1,5 @@
+s/SPI_Transmit/spi_tx/g
+s/SPI_Receive/spi_rx/g
+s/SPI_Init/spi_init/g
+s/SPI_Start/spi_start/g
+s/SPI_End/spi_end/g

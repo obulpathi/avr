@@ -1,0 +1,1 @@
+__attribute__ is an extension for GCC, which allows you to have finer control over variables and functions. You can use attributes to set the variables storage section, control inlining on functions or declare a function as an ISR. The AVR-GCC manual has lots of information on the different attributes you can apply. 

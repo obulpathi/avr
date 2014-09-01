@@ -1,0 +1,9 @@
+EEPROM : (copied from wikipedia)
+An EEPROM (also called an E2PROM) or Electronically Erasable Programmable Read-Only Memory, is a non-volatile storage used in computers and other devices to store small amounts of volatile (configuration) data.
+
+Functions:
+	void eeprom_write(unsigned int address, unsigned char data);
+	This function writes the "data" byte at the "address".
+
+	unsigned char eeprom_read(unsigned int address);
+	This function returns the "data" byte stored at "address"

@@ -1,0 +1,32 @@
+void RTC_Init(void)
+{
+	TWI_Init();
+	
+	return;
+}
+
+char RTC_ReadTime(void)
+{
+	char c;
+	int i;
+	
+	TWI_Start();
+	
+	TWI_TxSlaveAddress(TIMER, TWI_READ_MODE);
+	
+	for( i = 0 ; i < 18 ; i++ )
+	{
+		USART_TransmitHex( TWI_Receive() );
+	}
+	
+	c = TWI_ReceiveLastByte();
+		
+	TWI_Stop();
+	
+	return c;
+}
+
+void RTC_WriteTime(void)
+{
+	return;
+}

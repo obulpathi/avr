@@ -1,0 +1,9 @@
+sudo avrdude -P usb -B 10 -c dragon_isp -p $(MMCU) -U flash:w:rom.hex:i
+sudo avrdude -P usb -B 10 -c dragon_jtag -p $(MMCU) -U flash:w:rom.hex:i
+
+programmer types:
+	dragon_dw
+	dragon_jtag
+	dragon_isp
+	dragon_pp
+	dragon_hvsp

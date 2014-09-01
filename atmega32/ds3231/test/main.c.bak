@@ -1,0 +1,59 @@
+#include "main.h"
+
+void init(void)
+{
+	DDRD = 0xFF;
+	PORTD = 0xFF;
+
+	// give interrupt on falling edge of INT2 ... 
+	MCUCSR = MCUCSR & 0xBF;
+	// enable interrupt 2 ... 
+	GICR = 0x20;
+	// global interrupts enable ...
+	SREG = SREG | 0x80;
+
+	delay_ms(10000);
+	
+	rtc_init();
+	
+	return;
+}
+
+SIGNAL (SIG_INT2)
+{ 
+	    // clear the interrupt ...
+	    GIFR = GIFR | 0x20;
+	    // do action ...
+	    PORTD = ~PORTD;
+}
+
+int main(void)
+{
+	int i;
+
+	init();
+
+	delay_ms(1000);
+
+	rtc_start();
+	delay_ms(100);
+
+	rtc_set_interrupt1();
+	delay_ms(100);
+
+	while(1)
+	{
+		for( i = 0 ; i < 100 ; i++)
+		{
+			rtc_read_sec();
+			delay_ms(100);
+		}
+
+		rtc_clear_interrupt1();
+		delay_ms(100);
+	}
+	
+	while(1);
+
+	return;
+}

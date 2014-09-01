@@ -1,0 +1,20 @@
+a very informative tut on pgmmemory ...
+also google for avrlibc faq ... 
+
+http://www.avrfreaks.net/index.php?name=PNphpBB2&file=viewtopic&t=38003&start=0
+
+When strings are used in a program, they are commonly "hard-coded" into the firmware source code:
+
+Code:
+LCD_puts("Hardcoded String");
+
+
+While this seems the most logical way of using strings, it is *not* the most optimal. Common sense and intuition would dictate that the compiler would store the string in the program memory, and read it out byte-by-byte inside the LCD_puts routine. But this is not what happens.
+
+Because the LCD_puts routine (or other string routines) are designed to work with strings in RAM, the compiler is forced to read out the entire string constant from program memory into RAM, and then pass the string's RAM pointer to the routine (in this case LCD_puts). It certainly works but the RAM wastage adds up to significant amounts with each string. Why?
+
+Initial variable values and strings are copied out from program memory into RAM as part of the C startup routines, which execute before your main() function. Those startup routines give your globals their initial values, as well as ensure that all strings are inside RAM so they can be passed to your desired string handling routines. As more strings are added to your program, more data must be copied to RAM at startup and the more RAM is used up by holding static (unchanging) data.
+
+The solution to the problem is forcing strings to stay in program memory and only be read out as they are needed. This is not a simple task and requires string routines specifically designed to handle strings kept solely inside the program memory space.
+
+Using the "const" modifier on your string variables is a natural solution - but a wrong one. A "const" variable can only not be modified by the program code, but it does not explicitly prevent the variable value from being copied out to the AVRs RAM on startup. Some compilers implicitly do this for you, but GCC needs to be explicitly told that the contents must live in program memory for the entire duration of the program's execution.

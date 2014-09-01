@@ -1,0 +1,4 @@
+avr-gcc -g -mmcu=atmega32 -c main.c -o main.o
+avr-gcc -g -mmcu=atmega32 -c my_boot.c -o my_boot.o
+avr-gcc -g -mmcu=atmega32 -Wl,--section-start=.bootloader=0x7C00 -o rom.elf main.o my_boot.o
+avr-objcopy -j .text -j .data -j .bootloader -O ihex rom.elf rom.hex

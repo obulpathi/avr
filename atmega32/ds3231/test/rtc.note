@@ -1,0 +1,29 @@
+interface  for RTC:
+	RTC_Start(); starts timer ...
+	RTC_Stop();
+	RTC_GetSec();
+	and the list goes on ...
+
+Its better to use only one interrupt ... coz that lends easy in making of the software ... 
+There is a buffer ... right??? yes that buffer is for storing the data values temporarly and then ...
+My doubt is ... while changing time ... is there a possibility of interrupt being generated????? 
+
+Finalized : 
+	We will be using only one interrupt. That makes life more easier.
+	However we will not be mis manupulating the interrupt2 ... NOTE this strongly ... 
+	We are assuming that malfunctioned interrupts will not happen while setting the time.
+	However, to be on safe-side we will disable the interrupt functionality in order to be on the safe side.
+
+NOTE : For intercompatibility and reasons ... its planned to use"UTC" time format. 
+So all things should be notified in this format.
+// make the functions efficient ... time delays ... minimize them ... 
+// where should I deintialize the ports ... i mean twi ports and stuff ???? >>>>>>>>>>
+// also take care of sync and always keep in mind : INTERRUPTS ...
+// think abt a mechanism by which you can make sure that diffrential delay will be minimized ... kind of running only this
+// thread and suspending others ... disablin ghte interrupts ... that will make sure that diff time is minimum.
+// interrupt is set ... interrupt occurs ... its cleared ... is there a possibility of it being set again???
+// if so how much time will it take????
+// it is heavily advised that user should diasble interrupts along with clearing it ...
+
+// base functions start
+// reads a register

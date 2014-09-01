@@ -1,0 +1,246 @@
+;-------------------------------------------------------------------------------
+; Library to implement the HDQ single wire interface on MSP430 devices using
+; the P1.1 / TA0 pin. Note that an external pull-up resistor is necessary.
+;
+; A. Dannenberg
+; Texas Instruments Inc.
+; February 2004
+; Built with IAR Embedded Workbench Version: 2.21B
+;-------------------------------------------------------------------------------
+; Include the following line to toggle P1.0 on Timer_A0 ISR entry/exit
+; for use as scope trigger or for measuring ISR execution time.
+;#define DEBUG_HDQ
+;-------------------------------------------------------------------------------
+#include "msp430x11x1.h"
+#include "HDQ.h"
+;-------------------------------------------------------------------------------
+            PUBLIC  HDQSetup                    ; Exported symbols
+            PUBLIC  HDQWrite
+            PUBLIC  HDQRead
+;-------------------------------------------------------------------------------
+imWrite     EQU     0                           ; Modes for ISR, must be
+imWriteE    EQU     2                           ; multiples of two
+imRead      EQU     4
+imReadE     EQU     6
+imDelay     EQU     8
+;-------------------------------------------------------------------------------
+            RSEG     DATA16_N                   ; Place variables in RAM
+            EVEN                                ; Ensure it’s on an even boundary
+;-------------------------------------------------------------------------------
+Ticks       DS      2
+ISRMode     DS      2                           ; For ISR jump vector table
+Xfer        DS      1
+BitCnt      DS      1
+;-------------------------------------------------------------------------------
+            RSEG    CODE
+;-------------------------------------------------------------------------------
+; void HDQBreak(void)
+;
+; Local function to send a HDQ break-transmission for providing a safe
+; communication start.
+;-------------------------------------------------------------------------------
+HDQBreak    push.w  &TAR                        ; Use double break time
+            add.w   #tBreak*2,0(SP)             ; (Do calc on TOS)
+            pop.w   &TACCR0
+            mov.w   #OUTMOD_0+CCIE,&TACCTL0     ; Reset OUT0, enable int
+            mov.w   #imDelay,&ISRMode           ; Set ISR mode
+            bis.w   #LPM0,SR                    ; Wait for ISR completion
+            add.w   #tBR,&TACCR0                ; Break recovery time
+            mov.w   #OUTMOD_0+OUT+CCIE,&TACCTL0 ; Set OUT0, enable int
+            bis.w   #LPM0,SR                    ; Wait for ISR completion
+            ret
+;-------------------------------------------------------------------------------
+; void HDQBasicWrite(unsigned char Data)
+;
+; Local function to output the 8-bit variable 'Data' to the Timer_A.OUT0
+; output using the HDQ protocol.
+;
+; IN:  R12          Data
+;-------------------------------------------------------------------------------
+HDQBasicWrite
+            mov.b   R12,&Xfer
+            mov.w   #OUTMOD_0,&TACCTL0          ; Reset OUT0
+            mov.w   &TAR,&TACCR0
+            mov.w   &TACCR0,&Ticks              ; Bit start time stamp
+            bit.b   #0x01,R12                   ; LSB == 1?
+            jz      HDQbw1                      ; Jump if zero
+            add.w   #tHW1,&TACCR0               ; Output '1'
+            jmp     HDQbw2
+HDQbw1      add.w   #tHW0,&TACCR0               ; Output '0'
+HDQbw2      mov.w   #OUTMOD_4+CCIE,&TACCTL0     ; Toggle OUT0 on EQU0, en. int
+            mov.b   #8,&BitCnt                  ; 8 bits to transfer
+            mov.w   #imWrite,&ISRMode           ; Set ISR mode
+            bis.w   #LPM0,SR                    ; Wait for ISR completion
+            ret
+;-------------------------------------------------------------------------------
+; void HDQSetup(void)
+;
+; Exported function to initialize the Timer_A port pin (TA0) that
+; is used for HDQ communication
+;-------------------------------------------------------------------------------
+HDQSetup    bic.b   #02h,&P1DIR                 ; P1.1 as input
+            bis.b   #02h,&P1SEL                 ; Select TA0 function
+            
+#ifdef DEBUG_HDQ
+            bic.b   #01h,&P1OUT                 ; P1.0 is scope trigger
+            bis.b   #01h,&P1DIR
+#endif
+            ret
+;-------------------------------------------------------------------------------
+; void HDQWrite(unsigned char Addr, unsigned char Data)
+;
+; Exported function to write the 8-bit word 'Data' into the 8-bit register
+; 'Addr' of the attached HDQ-enabled device.
+;
+; IN:  R12          Addr
+;      R14          Data
+;-------------------------------------------------------------------------------
+HDQWrite    push.w  R12                         ; Save R12
+            mov.w   #TASSEL_2+MC_2,&TACTL       ; SMCLK, continuous mode
+            bis.b   #02h,&P1DIR                 ; P1.1 as in output
+            call    #HDQBreak                   ; Send HDQ break
+            bis.b   #080h,R12                   ; Write to Addr
+            call    #HDQBasicWrite
+            add.w   #tCYCH,&TACCR0              ; Insert delay
+            mov.w   #OUTMOD_0+OUT+CCIE,&TACCTL0 ; Set OUT0, enable int
+            mov.w   #imDelay,&ISRMode           ; Set ISR mode
+            bis.w   #LPM0,SR                    ; Wait for ISR completion
+            mov.w   R14,R12                     ; Write Data
+            call    #HDQBasicWrite
+            bic.b   #02h,&P1DIR                 ; P1.1 as in input
+            clr.w   &TACTL                      ; Stop Timer_A
+            mov.w   R12,R14                     ; Restore R14
+            pop.w   R12                         ; Restore R12
+            ret
+;-------------------------------------------------------------------------------
+; unsigned int HDQRead(unsigned char Addr)
+;
+; Exported function to read an 8-bit value from the address 'Addr' out of
+; the attached HDQ-enabled device. The function will return 0xffff in the
+; case of a communication failure (Time-Out).
+;
+; IN:  R12          Addr
+; OUT: R12          Data
+;-------------------------------------------------------------------------------
+HDQRead     mov.w   #TASSEL_2+MC_2,&TACTL       ; SMCLK, continuous mode
+            bis.b   #02h,&P1DIR                 ; P1.1 as output
+            call    #HDQBreak                   ; Send HDQ break
+            call    #HDQBasicWrite              ; Write Data
+            bic.b   #02h,&P1DIR                 ; P1.1 as input
+            mov.b   #08h,&BitCnt                ; 8 bits to transfer
+            mov.w   #imRead,&ISRMode            ; Set ISR mode
+            mov.w   #CM_2+CCIS_0+SCCI+CAP+CCIE,&TACCTL0  ; Capt. falling edge of P1.1
+            push.w  &TAR                        ; Time-Out
+            add.w   #tTO,0(SP)                  ; (Do calc on TOS)
+            pop.w   &TACCR1
+            mov.w   #CCIE,&TACCTL1              ; Enable Time-Out
+            bis.w   #LPM0,SR                    ; Wait for ISR completion
+            clr.w   &TACTL                      ; Stop Timer_A            
+            tst.b   &BitCnt                     ; All bits received?
+            jnz     HDQr1
+            mov.b   &Xfer,R12                   ; OK
+            ret
+HDQr1       mov.w   #0ffffh,R12                 ; Error condition (Time-Out)
+            ret
+;-------------------------------------------------------------------------------
+; void Timer_A0_ISR(void)
+;
+; Timer_A.CCR0 interrupt service function
+;-------------------------------------------------------------------------------
+Timer_A0_ISR
+
+#ifdef DEBUG_HDQ
+            xor.b   #01h,&P1OUT                 ; Toggle scope trigger
+#endif
+            add.w   &ISRMode,PC                 ; Do calculated jump
+            jmp     ISRMode_0
+            jmp     ISRMode_2
+            jmp     ISRMode_4
+            jmp     ISRMode_6
+
+ISRMode_8                                       ; Entry for imDelay
+            bic.w   #CCIFG,&TACCTL0             ; Disable int
+            bic.w   #LPM0,0(SP)                 ; Return active
+            jmp     TA0isrE
+
+ISRMode_0                                       ; Entry for imWrite
+            dec.b   &BitCnt                     ; Decr and check
+            jz      TA0isr1                     ; Jump if zero
+            push.w  &Ticks                      ; Time to cycle completion
+            add.w   #tCYCH,0(SP)                ; (Do calc on TOS)
+            pop.w   &TACCR0
+            mov.w   #imWriteE,&ISRMode          ; Switch ISR mode
+            jmp     TA0isrE
+TA0isr1     mov.w   #OUTMOD_0+OUT,&TACCTL0      ; Set OUT0, disable int
+            bic.w   #LPM0,0(SP)                 ; Return active
+            jmp     TA0isrE
+
+ISRMode_2                                       ; Entry for imWriteE
+            push.w  R15                         ; Save R15
+            mov.w   &TACCR0,&Ticks              ; Bit start time stamp   
+            mov.b   &Xfer,R15                   ; Process next bit
+            clrc
+            rrc.b   R15
+            mov.b   R15,&Xfer
+            bit.b   #01h,R15                    ; Is bit '1'?
+            jz      TA0isr2
+            add.w   #tHW1,&TACCR0               ; Output '1'
+            jmp     TA0isr3
+TA0isr2     add.w   #tHW0,&TACCR0               ; Output '0'
+TA0isr3     mov.w   #imWrite,&ISRMode           ; Switch ISR mode
+            pop.w   R15                         ; Restore R15
+            jmp     TA0isrE
+                
+ISRMode_4                                       ; Entry for imRead
+            clr.w   &TACCTL1                    ; Disable Time-Out
+            add.w   #(tDW0+tDW1)/2,&TACCR0      ; Time to middle of bit
+            bic.w   #CAP,&TACCTL0               ; Compare mode
+            mov.w   #imReadE,&ISRMode           ; Switch ISR mode
+            jmp     TA0isrE
+
+ISRMode_6                                       ; Entry for imReadE
+            clrc                                ; Process next bit
+            rrc.b   &Xfer
+            bit.w   #SCCI,&TACCTL0              ; Check Timer_A latch
+            jz      TA0isr4                     ; Jump if SCCI=='0'
+            bis.b   #080h,&Xfer                 ; Set MSB
+TA0isr4     dec.b   &BitCnt                     ; Decr and check
+            jz      TA0isr5                     ; Jump if zero
+            bis.w   #CAP,&TACCTL0               ; Capture mode
+            push.w  &TAR                        ; Time-Out
+            add.w   #tTO,0(SP)                  ; (Do calc on TOS)
+            pop.w   &TACCR1
+            mov.w   #CCIE,&TACCTL1              ; Enable Time-Out
+            mov.w   #imRead,&ISRMode            ; Switch ISR mode 
+            jmp     TA0isrE
+TA0isr5     mov.w   #OUTMOD_0+OUT,&TACCTL0      ; Set OUT0, disable int
+            bic.w   #LPM0,0(SP)                 ; Return active
+            
+TA0isrE
+
+#ifdef DEBUG_HDQ
+            xor.b   #01h,&P1OUT                 ; Toggle scope trigger
+#endif
+            reti                                ; Return from ISR
+;-------------------------------------------------------------------------------
+; void Timer_A1_ISR(void)
+;
+; Timer_A.CCR1-2, TA interrupt service function
+;-------------------------------------------------------------------------------
+Timer_A1_ISR
+            cmp.w   #0x02,&TAIV                 ; Check for Timer_A.CCR1
+            jne     TA1isr1                     ; Jump if not equal
+            clr.w   &TACCTL0                    ; Disable receiption
+            clr.w   &TACCTL1                    ; Disable Time-Out
+            bic.w   #LPM0,0(SP)                 ; Return active
+TA1isr1     reti                                ; Return from ISR
+;-------------------------------------------------------------------------------
+            COMMON  INTVEC
+;-------------------------------------------------------------------------------
+            ORG     TIMERA0_VECTOR
+            DW      Timer_A0_ISR
+            ORG     TIMERA1_VECTOR
+            DW      Timer_A1_ISR
+;-------------------------------------------------------------------------------
+            END
+            

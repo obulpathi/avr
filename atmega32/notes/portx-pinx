@@ -1,0 +1,1 @@
+If you are a 'hardware guy', think about it as two 8 bit latches, the PORT latches the data bus on a write, a PIN latches the data bus on a read. They just have the same address. If you think PORT and PIN are confusesing, just keep reading about DDR and pullups

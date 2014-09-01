@@ -1,0 +1,57 @@
+Introduction : Using the KS0713/S6B1713/ST7565 LCD driver chips  
+
+These three chips are generally posted as equivalent. Looking at the datasheets, they're not *quite* equivalent but all use the same instruction set and the only significant difference is in the contrast voltage settings. For brevity I'll refer to the KS chip throughout (though Samsung have now stopped making small LCD displays and drivers).
+
+The KS0713 is used as a single controller chip for LCD monochrome graphic displays of up to 65 by 128 pixels. Each pixel is individually addressable. The chip can be used in parallel mode - either 8080 flavour with ~RD and ~WR lines, or 6800 flavour with E and R/~W lines - or as a serial device, though the latter does not provide read capability. The choice of serial or parallel interface is often selected using a jumper or solder-pad on the display PCB while the 8080/6800 choice is extended to the user connections. Before you start playing, have a good look at the circuit diagram for the display to find out what you've got.
+
+This tutorial deals only with using the Displaytech 64128E - http://uk.rs-online.com/web/search/sear ... ;R=5327085 - in the 8080 parallel mode. That is, the MI ('C86' on the ST chip) pin is tied low. For other displays, you'll have to do some research. I also restrict myself to *writing* to the display.
+
+Display Specifications
+
+Before you can do anything else, there are a few critical things you need to know. In particular, the duty cycle, the bias, and the working voltage (Vdd-Vo) for the display.
+
+The Duty Cycle is set by the manufacturer and is hard wired onto the controller - you're unlikely to be able to change this. For a 64*128 display this will be either 1/64 or 1/65 - for smaller displays this will be different.
+
+The Bias controls the working voltages delivered to the display (LCDs work by switching various levels of DC to rows and columns; it's not just an on-off thing). For a 64*128 this will be either 1/7 or 1/9.
+
+The Operating Voltage provides the contrast for the display; too low or too high and you will see an all-black or all-white display. This voltage will be in the display data sheet.
+
+The chip has an on-board DC-DC converter which will generate the negative voltages required. In fact, it has three separate sections which can be used as required; the voltage booster, the voltage regulator, and a voltage follower. Each can be individually switched.
+
+I would expect most current displays - at least, those mounted on PCBs - to use the internal booster. The giveaway is whether there are a group of three to five capacitors placed on the various 'CAPx' pins: if they're there, the maker is being nice to you and you will not need an external voltage. Refer to the data sheet, and you'll see that the 64128E does in fact use this method. (Note - the KS chip can do *5 voltage boosting, the ST only *4. This is not a problem as they run from 3v and the displays will expect around nine volts Vo).
+
+If you need to run the display from externally generated voltages, I'm afraid you're on your own. Please read the datasheets...
+
+The Commands
+I won't go into detail here - in fact, I won't cover all the commands available - but there should be enough here to explain the more confusing options.
+
+Commands are written to the chip when the RS pin (A0 on the ST) is high; data is written when the pin is low. Other than that, writing commands or data are identical. For the hex values to use, refer to the tables in the datasheets.
+
+Display On/Off does what it says on the label. You will generally want the display 'On'.
+
+Initial Display Line will usually be zero, but you can scroll the display by changing this value.
+
+Set Reference Voltage Mode and Set Reference Voltage are two instructions which must be used sequentially. The first puts the chip into the reference mode; the second instruction is the data which must be sent to select the voltage. This is one of the voltages which you will use to change the fine contrast of the display.
+
+Set Page Address The display memory is organised as nine strips of 128 bytes across the display, with each byte occupying one column and eight horizontal rows. Bit zero is at the top. The ninth strip only has bit zero and is only displayed on 65-row displays. These strips are referred to as pages by the makers; setting the page address tells the chip which row of eight to use. Row zero is at the top of the display - provided that the initial display line is zero. Otherwise, it will move down the screen as commanded.
+
+Set Column Address Low and High These two commands are used independently to set the column which will be written to or read from by the next read or write data instruction. Each holds four bits of the eight bit address, though only the lower (total) seven bits are significant.
+
+ADC Select To simplify manufacture of the display, the chip can be configured to scan from left to right or right to left. The ADC Select command selects which should be used. If you get this wrong, your display will be left-right mirrored. For the 64128E, it should be set for normal display.
+
+Reverse Display On/Off sets whether a '1' in a data byte will be displayed as a bright spot or a dark spot. The default is for bright pixels against a dark ground.
+
+Entire Display On/Off Try not to touch this one. If it's 'on' then every pixel is lit on the display. If it's off, then the display is normal. If this is set to 'on' and Display On/Off is set to 'off' the display will go into a power save mode.
+
+LCD Bias Select This needs to be set to suit the specification in the data sheet. For the 64128E it needs to be 1/9. Note that there's only a single bit to select the bias; the options for that bit depend on the hardware defined duty cycle.
+
+SHL Select This behaves in the same way as ADC Select, but it operates vertically rather than horizontally.
+
+Power Control Configures the voltage booster, regulator, and follower. Refer to the data sheet for more precise details; I merely note that the 64128E requires all three to be turned on.
+
+Regulator Resistor Select This is the 'coarse' control for the contrast. Each chip datasheet has a graph which indicates the range of voltages for each resistor select value; these graphs are different for each chip and I'm not sure which is correct. For the 64128E the correct value is '5' - but you may have to experiment.
+
+There are other control commands; they are all detailed in the data sheets. These are all you need to get most displays running.
+
+Writing to the display
+As noted above, writing to the screen memory is a matter of selecting the page, followed by the column - usually both column select instructions. Then, simply write your data: bit 0 will be at the top of the display page, if ADC and SHL are normal. The column pointer is incremented automatically after each write, so if you are moving bulk data to the display it is only a matter of repeated writes. This is also very useful if you are writing a text character; simply send the character coded as vertical slices.

@@ -1,0 +1,1 @@
+sudo avarice -g -B 125KHz -j usb -P atmega32 -r

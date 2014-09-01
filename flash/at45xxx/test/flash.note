@@ -1,0 +1,43 @@
+thats good buddy k. 
+define two things ...
+	BOOLEAN formats TRUE and FALSE
+	TRUE = 0;
+	FLASE = error code ...
+	nice naa ... ok
+
+compare buffer functions ... check for correctness ...
+df command to know the space left ... number of pages ... ??? good k
+
+and make a full system ... 
+debugging this stuff is not that easy ... one should have programmer and leds and flash connected together ...
+connected in a flexible way ... got it ... think of it ...k
+
+you are not connecting the reset and write protect pins ...
+k this might be the cause for error ...
+might be check this one too k...
+but the default state is high ... they are internally pulled high ... k thats good ...
+
+however connect the reset and write protect pins by delault to high ... thats better ... k
+
+in the address bits check for reserverd bits ... (some four bits for upward compatiability)
+ok ...
+
+go through the algorithams and cross verify them with your program pseudo code ... k
+
+also implement the SPI_Close() : (parallel to de init program) : for reallocating the ports safely and reducing the power
+supply ...
+
+flash uses DONTCARE and spi uses DUMMY ok ...
+
+
+# Buffer 1 Write
+# Buffer 2 Write
+# Buffer 1 to Main Memory with Built in Erase
+# Buffer 2 to Main Memory with Built in Erase
+# Read Buffer 1
+# Read Buffer 2
+# Read Main Memory through Buffer 1
+# Read Main Memory through Buffer 2
+# Status Register Read
+
+SPI modes supported : 0 or 3.

@@ -1,0 +1,97 @@
+for programming using jtag cable
+with dragon
+sudo avrdude -P usb -B 10 -c dragon_jtag -p atmega32 -U flash:w:rom.hex:i
+
+with AVR JTAG module ( in isp mode )
+sudo avrdude -P /dev/ttyUSB0 -B 10 -c stk500v2 -p atmega32 -U flash:w:rom.hex:i
+
+with AVR JTAG module ( in jtag mode )
+sudo avrdude -P /dev/ttyUSB0 -B 10 -c jtag1 -p atmega32 -U flash:w:rom.hex:i
+
+Debugging
+
+Block Diagram
+
+uC <---> JTAG1 Protocol <---> avarice <---> avr-gdb
+uC <---> JTAG1 Protocol : connected using JTAG cable
+JTAG1 Protocol <---> avarice : connected via serial port
+avarice <---> avr-gdb : connected via ftp ( can be remote debugged also )
+PC's running avarice and avr-gdb can be different also, meaning by one can remotely debug a program via ftp.
+
+Download the code in to microcontroller.
+connect the debugger to the circuit using jtag cable and other end to usb
+start avarice
+
+avarice -B 125KHz --program --file main.out --part atmega32 --jtag /dev/ttyUSB0 :4242
+response:
+
+AVaRICE version 2.5, Dec  7 2006 02:12:20
+
+JTAG config starting.
+Hardware Version: 0xc0
+Software Version: 0x80
+Reported JTAG device ID: 0x9502
+Configured for device ID: 0x9502 atmega32 -- Matched with atmega32
+JTAG config complete.
+Preparing the target device for On Chip Debugging.
+
+Disabling lock bits:
+  LockBits -> 0xff
+
+  Enabling on-chip debugging:
+    Extended Fuse byte -> 0xe1
+      High Fuse byte -> 0x19
+         Low Fuse byte -> 0xe1
+ WARNING: The default behaviour has changed.
+ Programming no longer erases by default. If you want to erase and program
+ in a single step, use the --erase in addition to --program. The reason for
+ this change is to allow programming multiple sections (e.g. application and
+ bootloader) in multiple passes.
+
+ Downloading FLASH image to target...
+
+ Download complete.
+ Waiting for connection on port 4242.
+ Connection opened by host 127.0.0.1, port 2494.
+
+
+ Now in another tab start avr-gdb
+ jtag # avr-gdb main.out
+ GNU gdb 6.4
+ Copyright 2005 Free Software Foundation, Inc.
+ GDB is free software, covered by the GNU General Public License, and you are
+ welcome to change it and/or distribute copies of it under certain conditions.
+ Type "show copying" to see the conditions.
+ There is absolutely no warranty for GDB.  Type "show warranty" for details.
+ This GDB was configured as "--host=i486-linux-gnu --target=avr"...
+ (gdb) target remote localhost:4242
+ Remote debugging using localhost:4242
+ 0x00000000 in __vectors ()
+ (gdb) step
+ Single stepping until exit from function __vectors,
+ which has no line number information.
+ 0x00000054 in __trampolines_start ()
+ (gdb)
+ Single stepping until exit from function __trampolines_start,
+ which has no line number information.
+ 0x00000060 in __do_copy_data ()
+ (gdb)
+ Single stepping until exit from function __do_copy_data,
+ which has no line number information.
+ 0x00000070 in .do_copy_data_start ()
+ (gdb)
+ Single stepping until exit from function .do_copy_data_start,
+ which has no line number information.
+
+ 0x00000076 in __do_clear_bss ()
+ (gdb)
+ Single stepping until exit from function __do_clear_bss,
+ which has no line number information.
+ 0x00000080 in .do_clear_bss_start ()
+ (gdb)
+ Single stepping until exit from function .do_clear_bss_start,
+ which has no line number information.
+ main () at main.c:4
+
+ happy debugging :)
+ naidu.

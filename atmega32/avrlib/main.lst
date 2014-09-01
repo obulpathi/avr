@@ -1,0 +1,396 @@
+GAS LISTING /tmp/ccus5eCh.s 			page 1
+
+
+   1               		.file	"main.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.global __do_copy_data
+   8               		.global __do_clear_bss
+   9               		.stabs	"/home/naidu/code/atmega32/avrlib/",100,0,2,.Ltext0
+  10               		.stabs	"main.c",100,0,2,.Ltext0
+  11               		.text
+  12               	.Ltext0:
+  13               		.stabs	"gcc2_compiled.",60,0,0,0
+  14               		.stabs	"int:t(0,1)=r(0,1);-32768;32767;",128,0,0,0
+  15               		.stabs	"char:t(0,2)=r(0,2);0;127;",128,0,0,0
+  16               		.stabs	"long int:t(0,3)=@s32;r(0,3);020000000000;017777777777;",128,0,0,0
+  17               		.stabs	"unsigned int:t(0,4)=r(0,4);0;0177777;",128,0,0,0
+  18               		.stabs	"long unsigned int:t(0,5)=@s32;r(0,5);0;037777777777;",128,0,0,0
+  19               		.stabs	"long long int:t(0,6)=@s64;r(0,6);01000000000000000000000;0777777777777777777777;",128,0,0,
+  20               		.stabs	"long long unsigned int:t(0,7)=@s64;r(0,7);0;01777777777777777777777;",128,0,0,0
+  21               		.stabs	"short int:t(0,8)=r(0,8);-32768;32767;",128,0,0,0
+  22               		.stabs	"short unsigned int:t(0,9)=r(0,9);0;0177777;",128,0,0,0
+  23               		.stabs	"signed char:t(0,10)=@s8;r(0,10);-128;127;",128,0,0,0
+  24               		.stabs	"unsigned char:t(0,11)=@s8;r(0,11);0;255;",128,0,0,0
+  25               		.stabs	"float:t(0,12)=r(0,1);4;0;",128,0,0,0
+  26               		.stabs	"double:t(0,13)=r(0,1);4;0;",128,0,0,0
+  27               		.stabs	"long double:t(0,14)=r(0,1);4;0;",128,0,0,0
+  28               		.stabs	"void:t(0,15)=(0,15)",128,0,0,0
+  29               		.stabs	"/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/io.h",130,0,0,0
+  30               		.stabs	"/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/sfr_defs.h",130,0,0,0
+  31               		.stabs	"/usr/lib/gcc/avr/4.2.2/../../../../avr/include/inttypes.h",130,0,0,0
+  32               		.stabs	"/usr/lib/gcc/avr/4.2.2/../../../../avr/include/stdint.h",130,0,0,0
+  33               		.stabs	"int8_t:t(4,1)=(0,10)",128,0,121,0
+  34               		.stabs	"uint8_t:t(4,2)=(0,11)",128,0,122,0
+  35               		.stabs	"int16_t:t(4,3)=(0,1)",128,0,123,0
+  36               		.stabs	"uint16_t:t(4,4)=(0,4)",128,0,124,0
+  37               		.stabs	"int32_t:t(4,5)=(0,3)",128,0,125,0
+  38               		.stabs	"uint32_t:t(4,6)=(0,5)",128,0,126,0
+  39               		.stabs	"int64_t:t(4,7)=(0,6)",128,0,128,0
+  40               		.stabs	"uint64_t:t(4,8)=(0,7)",128,0,129,0
+  41               		.stabs	"intptr_t:t(4,9)=(4,3)",128,0,142,0
+  42               		.stabs	"uintptr_t:t(4,10)=(4,4)",128,0,147,0
+  43               		.stabs	"int_least8_t:t(4,11)=(4,1)",128,0,159,0
+  44               		.stabs	"uint_least8_t:t(4,12)=(4,2)",128,0,164,0
+  45               		.stabs	"int_least16_t:t(4,13)=(4,3)",128,0,169,0
+  46               		.stabs	"uint_least16_t:t(4,14)=(4,4)",128,0,174,0
+  47               		.stabs	"int_least32_t:t(4,15)=(4,5)",128,0,179,0
+  48               		.stabs	"uint_least32_t:t(4,16)=(4,6)",128,0,184,0
+  49               		.stabs	"int_least64_t:t(4,17)=(4,7)",128,0,192,0
+  50               		.stabs	"uint_least64_t:t(4,18)=(4,8)",128,0,199,0
+  51               		.stabs	"int_fast8_t:t(4,19)=(4,1)",128,0,213,0
+  52               		.stabs	"uint_fast8_t:t(4,20)=(4,2)",128,0,218,0
+  53               		.stabs	"int_fast16_t:t(4,21)=(4,3)",128,0,223,0
+  54               		.stabs	"uint_fast16_t:t(4,22)=(4,4)",128,0,228,0
+  55               		.stabs	"int_fast32_t:t(4,23)=(4,5)",128,0,233,0
+  56               		.stabs	"uint_fast32_t:t(4,24)=(4,6)",128,0,238,0
+  57               		.stabs	"int_fast64_t:t(4,25)=(4,7)",128,0,246,0
+GAS LISTING /tmp/ccus5eCh.s 			page 2
+
+
+  58               		.stabs	"uint_fast64_t:t(4,26)=(4,8)",128,0,253,0
+  59               		.stabs	"intmax_t:t(4,27)=(4,7)",128,0,273,0
+  60               		.stabs	"uintmax_t:t(4,28)=(4,8)",128,0,278,0
+  61               		.stabn	162,0,0,0
+  62               		.stabs	"int_farptr_t:t(3,1)=(4,5)",128,0,77,0
+  63               		.stabs	"uint_farptr_t:t(3,2)=(4,6)",128,0,81,0
+  64               		.stabn	162,0,0,0
+  65               		.stabn	162,0,0,0
+  66               		.stabn	162,0,0,0
+  67               		.stabs	"/usr/lib/gcc/avr/4.2.2/../../../../avr/include/stdlib.h",130,0,0,0
+  68               		.stabs	"/usr/lib/gcc/avr/4.2.2/include/stddef.h",130,0,0,0
+  69               		.stabs	"size_t:t(6,1)=(0,4)",128,0,214,0
+  70               		.stabs	"wchar_t:t(6,2)=(0,1)",128,0,326,0
+  71               		.stabn	162,0,0,0
+  72               		.stabs	"div_t:t(5,1)=(5,2)=s4quot:(0,1),0,16;rem:(0,1),16,16;;",128,0,71,0
+  73               		.stabs	"ldiv_t:t(5,3)=(5,4)=s8quot:(0,3),0,32;rem:(0,3),32,32;;",128,0,77,0
+  74               		.stabs	"__compar_fn_t:t(5,5)=(5,6)=*(5,7)=f(0,1)",128,0,80,0
+  75               		.stabn	162,0,0,0
+  76               		.stabs	"/home/naidu/code/lib/avrlib/avrlibtypes.h",130,0,0,0
+  77               		.stabs	"u08:t(7,1)=(0,11)",128,0,32,0
+  78               		.stabs	"s08:t(7,2)=(0,10)",128,0,33,0
+  79               		.stabs	"u16:t(7,3)=(0,9)",128,0,34,0
+  80               		.stabs	"s16:t(7,4)=(0,8)",128,0,35,0
+  81               		.stabs	"u32:t(7,5)=(0,5)",128,0,36,0
+  82               		.stabs	"s32:t(7,6)=(0,3)",128,0,37,0
+  83               		.stabs	"u64:t(7,7)=(0,7)",128,0,38,0
+  84               		.stabs	"s64:t(7,8)=(0,6)",128,0,39,0
+  85               		.stabs	"BOOL:t(7,9)=(0,11)",128,0,69,0
+  86               		.stabs	"BYTE:t(7,10)=(0,11)",128,0,70,0
+  87               		.stabs	"WORD:t(7,11)=(0,4)",128,0,71,0
+  88               		.stabs	"DWORD:t(7,12)=(0,5)",128,0,72,0
+  89               		.stabs	"UCHAR:t(7,13)=(0,11)",128,0,74,0
+  90               		.stabs	"UINT:t(7,14)=(0,4)",128,0,75,0
+  91               		.stabs	"USHORT:t(7,15)=(0,9)",128,0,76,0
+  92               		.stabs	"ULONG:t(7,16)=(0,5)",128,0,77,0
+  93               		.stabs	"CHAR:t(7,17)=(0,2)",128,0,79,0
+  94               		.stabs	"INT:t(7,18)=(0,1)",128,0,80,0
+  95               		.stabs	"LONG:t(7,19)=(0,3)",128,0,81,0
+  96               		.stabn	162,0,0,0
+  97               		.stabs	"/home/naidu/code/lib/avrlib/rtc.h",130,0,0,0
+  98               		.stabs	"struct_RtcTime:T(8,1)=s10tics:(7,1),0,8;totaltics:(7,3),8,16;hours:(7,1),24,8;minutes:(7,1
+  99               		.stabs	"RtcTimeType:t(8,2)=(8,1)",128,0,41,0
+ 100               		.stabn	162,0,0,0
+ 101               		.stabs	"init:F(0,15)",36,0,11,init
+ 102               	.global	init
+ 103               		.type	init, @function
+ 104               	init:
+ 105               		.stabd	46,0,0
+   1:main.c        **** #define F_CPU 1000000UL
+   2:main.c        **** 
+   3:main.c        **** #include <avr/io.h>
+   4:main.c        **** #include <util/delay.h>
+   5:main.c        **** #include <stdlib.h>
+   6:main.c        **** #include "avrlibtypes.h"
+   7:main.c        **** #include "avrlibdefs.h"
+   8:main.c        **** #include "rtc.h"
+   9:main.c        **** 
+GAS LISTING /tmp/ccus5eCh.s 			page 3
+
+
+  10:main.c        **** void init(void)
+  11:main.c        **** {
+ 106               		.stabn	68,0,11,.LM0-.LFBB1
+ 107               	.LM0:
+ 108               	.LFBB1:
+ 109               	/* prologue: frame size=0 */
+ 110               	/* prologue end (size=0) */
+ 111               	.LBB12:
+ 112               	.LBB13:
+ 113               	.LBB14:
+ 114               	.LBB15:
+ 115               		.stabs	"/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h",132,0,0,.Ltext1
+ 116               	.Ltext1:
+   1:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** /* Copyright (c) 2002, Marek Michalkiewicz
+   2:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****    Copyright (c) 2007 Joerg Wunsch
+   3:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****    All rights reserved.
+   4:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** 
+   5:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****    Redistribution and use in source and binary forms, with or without
+   6:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****    modification, are permitted provided that the following conditions are met:
+   7:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** 
+   8:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****    * Redistributions of source code must retain the above copyright
+   9:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****      notice, this list of conditions and the following disclaimer.
+  10:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** 
+  11:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****    * Redistributions in binary form must reproduce the above copyright
+  12:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****      notice, this list of conditions and the following disclaimer in
+  13:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****      the documentation and/or other materials provided with the
+  14:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****      distribution.
+  15:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** 
+  16:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****    * Neither the name of the copyright holders nor the names of
+  17:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****      contributors may be used to endorse or promote products derived
+  18:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****      from this software without specific prior written permission.
+  19:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** 
+  20:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  21:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****   AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  22:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  23:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****   ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+  24:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****   LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  25:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****   CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+  26:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****   SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  27:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****   INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  28:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****   CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  29:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  30:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****   POSSIBILITY OF SUCH DAMAGE. */
+  31:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** 
+  32:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** /* $Id: delay_basic.h,v 1.1.2.2 2007/05/13 21:26:06 joerg_wunsch Exp $ */
+  33:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** 
+  34:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** #ifndef _UTIL_DELAY_BASIC_H_
+  35:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** #define _UTIL_DELAY_BASIC_H_ 1
+  36:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** 
+  37:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** #include <inttypes.h>
+  38:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** 
+  39:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** /** \file */
+  40:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** /** \defgroup util_delay_basic <util/delay_basic.h>: Basic busy-wait delay loops
+  41:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     \code
+  42:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     #include <util/delay_basic.h>
+  43:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     \endcode
+  44:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** 
+GAS LISTING /tmp/ccus5eCh.s 			page 4
+
+
+  45:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     The functions in this header file implement simple delay loops
+  46:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     that perform a busy-waiting.  They are typically used to
+  47:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     facilitate short delays in the program execution.  They are
+  48:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     implemented as count-down loops with a well-known CPU cycle
+  49:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     count per loop iteration.  As such, no other processing can
+  50:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     occur simultaneously.  It should be kept in mind that the
+  51:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     functions described here do not disable interrupts.
+  52:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** 
+  53:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     In general, for long delays, the use of hardware timers is
+  54:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     much preferrable, as they free the CPU, and allow for
+  55:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     concurrent processing of other events while the timer is
+  56:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     running.  However, in particular for very short delays, the
+  57:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     overhead of setting up a hardware timer is too much compared
+  58:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     to the overall delay time.
+  59:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** 
+  60:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     Two inline functions are provided for the actual delay algorithms.
+  61:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** 
+  62:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** */
+  63:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** 
+  64:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** #if !defined(__DOXYGEN__)
+  65:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** static inline void _delay_loop_1(uint8_t __count) __attribute__((always_inline));
+  66:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** static inline void _delay_loop_2(uint16_t __count) __attribute__((always_inline));
+  67:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** #endif
+  68:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** 
+  69:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** /** \ingroup util_delay_basic
+  70:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** 
+  71:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     Delay loop using an 8-bit counter \c __count, so up to 256
+  72:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     iterations are possible.  (The value 256 would have to be passed
+  73:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     as 0.)  The loop executes three CPU cycles per iteration, not
+  74:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     including the overhead the compiler needs to setup the counter
+  75:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     register.
+  76:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** 
+  77:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     Thus, at a CPU speed of 1 MHz, delays of up to 768 microseconds
+  78:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     can be achieved.
+  79:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** */
+  80:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** void
+  81:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** _delay_loop_1(uint8_t __count)
+  82:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** {
+  83:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** 	__asm__ volatile (
+  84:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** 		"1: dec %0" "\n\t"
+  85:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** 		"brne 1b"
+  86:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** 		: "=r" (__count)
+  87:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** 		: "0" (__count)
+  88:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** 	);
+  89:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** }
+  90:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** 
+  91:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** /** \ingroup util_delay_basic
+  92:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** 
+  93:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     Delay loop using a 16-bit counter \c __count, so up to 65536
+  94:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     iterations are possible.  (The value 65536 would have to be
+  95:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     passed as 0.)  The loop executes four CPU cycles per iteration,
+  96:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     not including the overhead the compiler requires to setup the
+  97:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     counter register pair.
+  98:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** 
+  99:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     Thus, at a CPU speed of 1 MHz, delays of up to about 262.1
+ 100:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     milliseconds can be achieved.
+ 101:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****  */
+GAS LISTING /tmp/ccus5eCh.s 			page 5
+
+
+ 102:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** void
+ 103:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** _delay_loop_2(uint16_t __count)
+ 104:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** {
+ 105:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** 	__asm__ volatile (
+ 117               		.stabn	68,0,105,.LM1-.LFBB1
+ 118               	.LM1:
+ 119 0000 84E2      		ldi r24,lo8(-3036)
+ 120 0002 94EF      		ldi r25,hi8(-3036)
+ 121               	/* #APP */
+ 122 0004 0197      		1: sbiw r24,1
+ 123 0006 01F4      		brne 1b
+ 124               	/* #NOAPP */
+ 125               	.LBE15:
+ 126               	.LBE14:
+ 127               	.LBE13:
+ 128               	.LBE12:
+ 129               		.stabs	"main.c",132,0,0,.Ltext2
+ 130               	.Ltext2:
+  12:main.c        **** 	// allow power to stabilize
+  13:main.c        **** 	_delay_ms(250);
+  14:main.c        **** 
+  15:main.c        **** 	// disable jtag
+  16:main.c        **** 	MCUCSR = MCUCSR | 0x80;
+ 131               		.stabn	68,0,16,.LM2-.LFBB1
+ 132               	.LM2:
+ 133 0008 84B7      		in r24,84-0x20
+ 134 000a 8068      		ori r24,lo8(-128)
+ 135 000c 84BF      		out 84-0x20,r24
+  17:main.c        **** 	MCUCSR = MCUCSR | 0x80;
+ 136               		.stabn	68,0,17,.LM3-.LFBB1
+ 137               	.LM3:
+ 138 000e 84B7      		in r24,84-0x20
+ 139 0010 8068      		ori r24,lo8(-128)
+ 140 0012 84BF      		out 84-0x20,r24
+  18:main.c        **** 
+  19:main.c        **** 	// port settings
+  20:main.c        **** 	DDRD = 0xFF;
+ 141               		.stabn	68,0,20,.LM4-.LFBB1
+ 142               	.LM4:
+ 143 0014 8FEF      		ldi r24,lo8(-1)
+ 144 0016 81BB      		out 49-0x20,r24
+  21:main.c        **** 	PORTD = 0xFF;
+ 145               		.stabn	68,0,21,.LM5-.LFBB1
+ 146               	.LM5:
+ 147 0018 82BB      		out 50-0x20,r24
+  22:main.c        **** 
+  23:main.c        ****   rtcInit();
+ 148               		.stabn	68,0,23,.LM6-.LFBB1
+ 149               	.LM6:
+ 150 001a 0E94 0000 		call rtcInit
+ 151               	/* epilogue: frame size=0 */
+ 152 001e 0895      		ret
+ 153               	/* epilogue end (size=1) */
+ 154               	/* function init size 18 (17) */
+ 155               		.size	init, .-init
+ 156               		.stabs	"__count:r(4,4)",64,0,162,24
+ 157               		.stabn	192,0,0,.LBB14-.LFBB1
+GAS LISTING /tmp/ccus5eCh.s 			page 6
+
+
+ 158               		.stabn	224,0,0,.LBE14-.LFBB1
+ 159               	.Lscope1:
+ 160               		.stabs	"",36,0,0,.Lscope1-.LFBB1
+ 161               		.stabd	78,0,0
+ 162               		.stabs	"main:F(0,1)",36,0,29,main
+ 163               	.global	main
+ 164               		.type	main, @function
+ 165               	main:
+ 166               		.stabd	46,0,0
+  24:main.c        **** 
+  25:main.c        **** 	return;
+  26:main.c        **** }
+  27:main.c        **** 
+  28:main.c        **** int main(void)
+  29:main.c        **** {
+ 167               		.stabn	68,0,29,.LM7-.LFBB2
+ 168               	.LM7:
+ 169               	.LFBB2:
+ 170               	/* prologue: frame size=0 */
+ 171 0020 C0E0      		ldi r28,lo8(__stack - 0)
+ 172 0022 D0E0      		ldi r29,hi8(__stack - 0)
+ 173 0024 DEBF      		out __SP_H__,r29
+ 174 0026 CDBF      		out __SP_L__,r28
+ 175               	/* prologue end (size=4) */
+  30:main.c        **** 	init();
+ 176               		.stabn	68,0,30,.LM8-.LFBB2
+ 177               	.LM8:
+ 178 0028 0E94 0000 		call init
+ 179               	.L4:
+  31:main.c        **** 
+  32:main.c        **** 	// write your code here
+  33:main.c        ****   while(1)
+  34:main.c        ****   {
+  35:main.c        ****     PORTD = ~PORTD;
+ 180               		.stabn	68,0,35,.LM9-.LFBB2
+ 181               	.LM9:
+ 182 002c 82B3      		in r24,50-0x20
+ 183 002e 8095      		com r24
+ 184 0030 82BB      		out 50-0x20,r24
+ 185               	.LBB22:
+ 186               	.LBB23:
+ 187               	.LBB24:
+ 188               	.LBB25:
+ 189               		.stabs	"/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h",132,0,0,.Ltext3
+ 190               	.Ltext3:
+ 191               		.stabn	68,0,105,.LM10-.LFBB2
+ 192               	.LM10:
+ 193 0032 84E2      		ldi r24,lo8(-3036)
+ 194 0034 94EF      		ldi r25,hi8(-3036)
+ 195               	/* #APP */
+ 196 0036 0197      		1: sbiw r24,1
+ 197 0038 01F4      		brne 1b
+ 198               	/* #NOAPP */
+ 199 003a 00C0      		rjmp .L4
+ 200               	.LBE25:
+ 201               	.LBE24:
+ 202               	.LBE23:
+GAS LISTING /tmp/ccus5eCh.s 			page 7
+
+
+ 203               	.LBE22:
+ 204               	/* epilogue: frame size=0 */
+ 205               	/* epilogue: noreturn */
+ 206               	/* epilogue end (size=0) */
+ 207               	/* function main size 16 (12) */
+ 208               		.size	main, .-main
+ 209               		.stabs	"__count:r(4,4)",64,0,162,24
+ 210               		.stabn	192,0,0,.LBB24-.LFBB2
+ 211               		.stabn	224,0,0,.LBE24-.LFBB2
+ 212               	.Lscope2:
+ 213               		.stabs	"",36,0,0,.Lscope2-.LFBB2
+ 214               		.stabd	78,0,0
+ 215               		.stabs	"",100,0,0,.Letext0
+ 216               	.Letext0:
+ 217               	/* File "main.c": code   34 = 0x0022 (  29), prologues   4, epilogues   1 */
+GAS LISTING /tmp/ccus5eCh.s 			page 8
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 main.c
+     /tmp/ccus5eCh.s:2      *ABS*:0000003f __SREG__
+     /tmp/ccus5eCh.s:3      *ABS*:0000003e __SP_H__
+     /tmp/ccus5eCh.s:4      *ABS*:0000003d __SP_L__
+     /tmp/ccus5eCh.s:5      *ABS*:00000000 __tmp_reg__
+     /tmp/ccus5eCh.s:6      *ABS*:00000001 __zero_reg__
+     /tmp/ccus5eCh.s:104    .text:00000000 init
+     /tmp/ccus5eCh.s:165    .text:00000020 main
+
+UNDEFINED SYMBOLS
+__do_copy_data
+__do_clear_bss
+rtcInit
+__stack

@@ -1,0 +1,12 @@
+1 - VDD ==> Input voltage.
+2 - SCK ==> Serial Clock.
+3 - SDI ==> Serial Data Input.
+4 - D/C ==> Data/Command Input.
+5 - SCE ==> Chip Select.
+6 - GND ==> Ground.
+7 - VOUT ==> VLCD.
+8 - RES ==> Reset.
+
+It uses two kinds of controllers ... 
+	pcd8544
+	lph7779

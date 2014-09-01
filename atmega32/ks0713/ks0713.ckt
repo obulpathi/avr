@@ -1,0 +1,9 @@
+// pc0-7 ->   d0-7
+
+// note that we have wired the display in 8080 mode
+// so wr and rd rather than r/~w and e
+#define   cs  PA3      /* chip select  */
+#define   rst PA4      /* chip reset   */
+#define   rs  PA5      /* data/control */
+#define   wr  PA6      /* write        */
+#define   rd  PA7      /* read         */

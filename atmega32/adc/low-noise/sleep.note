@@ -1,0 +1,6 @@
+* The 5 different modes are:
+*     SLEEP_MODE_IDLE         -the least power savings 
+*     SLEEP_MODE_ADC
+*     SLEEP_MODE_PWR_SAFE
+*     SLEEP_MODE_STANDBY
+*     SLEEP_MODE_PWR_DOWN     -the most power savings

@@ -1,0 +1,4 @@
+This program shows how to use rom objects ... 
+declaring the constats .. like strings etc ... in rom saves sram ... :)
+
+for more structs : <avr/pgmspace.h>

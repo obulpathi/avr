@@ -1,0 +1,17 @@
+make chksum
+filein: broken.srec
+fileout: fixed.srec
+
+refer to : http://linux.die.net/man/1/srec_examples
+and other srec man pages ... 
+
+Fixing Checksums
+Some embedded firmware developers are saddled with featherbrained tools which produce incorrect checksums, which the more vigilant models of EPROM programmer will not accept.
+
+To fix the checksums on a file, use the -ignore-checksums option. For example:
+
+    srec_cat broken.srec --ignore-checksums -o fixed.srec
+
+The checksums in I]broken.srec are parsed (it is still and error if they are absent) but are not checked. The resulting I]fixed.srec file has correct checksums. The -ignore-checksums option only applies to input.
+
+This option may be used on any file format which has checksums, including Intel hex. 

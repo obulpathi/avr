@@ -1,0 +1,253 @@
+   1               		.file	"spm.c"
+   2               		.arch atmega128
+   3               	__SREG__ = 0x3f
+   4               	__SP_H__ = 0x3e
+   5               	__SP_L__ = 0x3d
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+   8               		.global __do_copy_data
+   9               		.global __do_clear_bss
+  12               		.text
+  13               	.Ltext0:
+  92               	.global	page_erase
+  94               	page_erase:
+  95               		.stabd	46,0,0
+   1:spm.c         **** #include "spm.h"
+   2:spm.c         **** 
+   3:spm.c         **** int page_erase( uint32_t page)
+   4:spm.c         **** {
+  97               	.LM0:
+  98               	/* prologue: frame size=0 */
+  99               	/* prologue end (size=0) */
+   5:spm.c         ****         uint8_t sreg;
+   6:spm.c         **** 	
+   7:spm.c         **** 	// save status register
+   8:spm.c         ****         sreg = SREG;
+ 101               	.LM1:
+ 102 0000 3FB7      		in r19,95-0x20
+   9:spm.c         **** 
+  10:spm.c         **** 	// erase the page
+  11:spm.c         ****         boot_page_erase (page);
+ 104               	.LM2:
+ 105 0002 23E0      		ldi r18,lo8(3)
+ 106               	/* #APP */
+ 107 0004 FB01      		movw r30, r22
+ 108 0006 8093 5B00 		sts  91, r24
+ 109 000a 2093 6800 		sts 104, r18
+ 110 000e E895      		spm
+ 111               		
+ 112               	/* #NOAPP */
+ 113               	.L2:
+  12:spm.c         **** 	// wait until the memory is erased.
+  13:spm.c         ****         boot_spm_busy_wait ();
+ 115               	.LM3:
+ 116 0010 8091 6800 		lds r24,104
+ 117 0014 80FD      		sbrc r24,0
+ 118 0016 00C0      		rjmp .L2
+  14:spm.c         **** 	
+  15:spm.c         ****         // Reenable RWW-section again. We need this if we want to jump back
+  16:spm.c         ****         // to the application after bootloading.
+  17:spm.c         ****         boot_rww_enable ();
+ 120               	.LM4:
+ 121 0018 81E1      		ldi r24,lo8(17)
+ 122               	/* #APP */
+ 123 001a 8093 6800 		sts 104, r24
+ 124 001e E895      		spm
+ 125               		
+  18:spm.c         **** 	
+  19:spm.c         **** 	// restore status register
+  20:spm.c         ****         SREG = sreg;
+ 127               	.LM5:
+ 128               	/* #NOAPP */
+ 129 0020 3FBF      		out 95-0x20,r19
+  21:spm.c         **** 
+  22:spm.c         **** 	return 0;
+  23:spm.c         **** }
+ 131               	.LM6:
+ 132 0022 80E0      		ldi r24,lo8(0)
+ 133 0024 90E0      		ldi r25,hi8(0)
+ 134               	/* epilogue: frame size=0 */
+ 135 0026 0895      		ret
+ 136               	/* epilogue end (size=1) */
+ 137               	/* function page_erase size 27 (26) */
+ 142               	.Lscope0:
+ 144               		.stabd	78,0,0
+ 145               		.section	.bootloader,"ax",@progbits
+ 149               	.global	boot_program_page
+ 151               	boot_program_page:
+ 152               		.stabd	46,0,0
+  24:spm.c         **** 
+  25:spm.c         **** void boot_program_page (uint32_t page, uint8_t *buf)
+  26:spm.c         **** {
+ 154               	.LM7:
+ 155               	/* prologue: frame size=0 */
+ 156 0000 DF92      		push r13
+ 157 0002 EF92      		push r14
+ 158 0004 FF92      		push r15
+ 159 0006 0F93      		push r16
+ 160 0008 1F93      		push r17
+ 161 000a CF93      		push r28
+ 162 000c DF93      		push r29
+ 163               	/* prologue end (size=7) */
+ 164 000e 7B01      		movw r14,r22
+ 165 0010 8C01      		movw r16,r24
+ 166 0012 DA01      		movw r26,r20
+  27:spm.c         ****         uint16_t i, w;
+  28:spm.c         ****         uint8_t sreg;
+  29:spm.c         **** 
+  30:spm.c         **** 	// save status register
+  31:spm.c         ****         sreg = SREG;
+ 168               	.LM8:
+ 169 0014 DFB6      		in r13,95-0x20
+  32:spm.c         **** 	
+  33:spm.c         ****         // Disable interrupts.
+  34:spm.c         ****         cli();
+ 171               	.LM9:
+ 172               	/* #APP */
+ 173 0016 F894      		cli
+ 174               	/* #NOAPP */
+ 175               	.L8:
+  35:spm.c         **** 	
+  36:spm.c         **** 	// wait for eeprom write completion
+  37:spm.c         ****         eeprom_busy_wait ();
+ 177               	.LM10:
+ 178 0018 E199      		sbic 60-0x20,1
+ 179 001a 00C0      		rjmp .L8
+  38:spm.c         **** 	
+  39:spm.c         **** 	// erase the page
+  40:spm.c         ****         boot_page_erase (page);
+ 181               	.LM11:
+ 182 001c 83E0      		ldi r24,lo8(3)
+ 183               	/* #APP */
+ 184 001e F701      		movw r30, r14
+ 185 0020 0093 5B00 		sts  91, r16
+ 186 0024 8093 6800 		sts 104, r24
+ 187 0028 E895      		spm
+ 188               		
+ 189               	/* #NOAPP */
+ 190               	.L10:
+  41:spm.c         **** 	
+  42:spm.c         **** 	// wait until the memory is erased.
+  43:spm.c         ****         boot_spm_busy_wait ();
+ 192               	.LM12:
+ 193 002a 8091 6800 		lds r24,104
+ 194 002e 80FD      		sbrc r24,0
+ 195 0030 00C0      		rjmp .L10
+ 196 0032 B801      		movw r22,r16
+ 197 0034 A701      		movw r20,r14
+ 198 0036 C0E8      		ldi r28,lo8(128)
+ 199 0038 D0E0      		ldi r29,hi8(128)
+ 200 003a 31E0      		ldi r19,lo8(1)
+ 201               	.L12:
+  44:spm.c         **** 
+  45:spm.c         **** 	// fill up the buffer
+  46:spm.c         ****         for ( i = 0; i < SPM_PAGESIZE; i = i + 2)
+  47:spm.c         ****         {
+  48:spm.c         **** 		// Set up little-endian word.
+  49:spm.c         **** 
+  50:spm.c         **** 		w = *buf++;
+ 203               	.LM13:
+ 204 003c 2C91      		ld r18,X
+  51:spm.c         **** 		w += (*buf++) << 8;
+ 206               	.LM14:
+ 207 003e FD01      		movw r30,r26
+ 208 0040 8181      		ldd r24,Z+1
+ 209 0042 1296      		adiw r26,2
+  52:spm.c         ****         
+  53:spm.c         **** 		boot_page_fill (page + i, w);
+ 211               	.LM15:
+ 212 0044 9927      		clr r25
+ 213 0046 982F      		mov r25,r24
+ 214 0048 8827      		clr r24
+ 215 004a 820F      		add r24,r18
+ 216 004c 911D      		adc r25,__zero_reg__
+ 217               	/* #APP */
+ 218 004e 0C01      		movw  r0, r24
+ 219 0050 FA01      		movw r30, r20
+ 220 0052 6093 5B00 		sts 91, r22
+ 221 0056 3093 6800 		sts 104, r19
+ 222 005a E895      		spm
+ 223 005c 1124      		clr  r1
+ 224               		
+ 225               	/* #NOAPP */
+ 226 005e 2197      		sbiw r28,1
+ 227 0060 4E5F      		subi r20,lo8(-(2))
+ 228 0062 5F4F      		sbci r21,hi8(-(2))
+ 229 0064 6F4F      		sbci r22,hlo8(-(2))
+ 230 0066 7F4F      		sbci r23,hhi8(-(2))
+ 232               	.LM16:
+ 233 0068 2097      		sbiw r28,0
+ 234 006a 01F4      		brne .L12
+  54:spm.c         ****         }
+  55:spm.c         **** 	
+  56:spm.c         **** 	// store buffer in flash page.
+  57:spm.c         ****         boot_page_write (page);
+ 236               	.LM17:
+ 237 006c 85E0      		ldi r24,lo8(5)
+ 238               	/* #APP */
+ 239 006e F701      		movw r30, r14
+ 240 0070 0093 5B00 		sts 91, r16
+ 241 0074 8093 6800 		sts 104, r24
+ 242 0078 E895      		spm
+ 243               		
+ 244               	/* #NOAPP */
+ 245               	.L14:
+  58:spm.c         **** 	
+  59:spm.c         **** 	// wait until the memory is written.
+  60:spm.c         ****         boot_spm_busy_wait(); 
+ 247               	.LM18:
+ 248 007a 8091 6800 		lds r24,104
+ 249 007e 80FD      		sbrc r24,0
+ 250 0080 00C0      		rjmp .L14
+  61:spm.c         **** 
+  62:spm.c         ****         // Reenable RWW-section again. We need this if we want to jump back
+  63:spm.c         ****         // to the application after bootloading.
+  64:spm.c         ****         boot_rww_enable ();
+ 252               	.LM19:
+ 253 0082 81E1      		ldi r24,lo8(17)
+ 254               	/* #APP */
+ 255 0084 8093 6800 		sts 104, r24
+ 256 0088 E895      		spm
+ 257               		
+  65:spm.c         **** 
+  66:spm.c         ****         // restore the status register
+  67:spm.c         ****         SREG = sreg;
+ 259               	.LM20:
+ 260               	/* #NOAPP */
+ 261 008a DFBE      		out 95-0x20,r13
+  68:spm.c         **** 	
+  69:spm.c         **** 	// reenable the interrupts ... if they are enabled.
+  70:spm.c         **** 	sei();
+ 263               	.LM21:
+ 264               	/* #APP */
+ 265 008c 7894      		sei
+ 266               	/* #NOAPP */
+ 267               	/* epilogue: frame size=0 */
+ 268 008e DF91      		pop r29
+ 269 0090 CF91      		pop r28
+ 270 0092 1F91      		pop r17
+ 271 0094 0F91      		pop r16
+ 272 0096 FF90      		pop r15
+ 273 0098 EF90      		pop r14
+ 274 009a DF90      		pop r13
+ 275 009c 0895      		ret
+ 276               	/* epilogue end (size=8) */
+ 277               	/* function boot_program_page size 98 (83) */
+ 282               	.Lscope1:
+ 284               		.stabd	78,0,0
+ 285               		.text
+ 287               	.Letext0:
+ 288               	/* File "spm.c": code  125 = 0x007d ( 109), prologues   7, epilogues   9 */
+DEFINED SYMBOLS
+                            *ABS*:00000000 spm.c
+     /tmp/ccHGyZY8.s:3      *ABS*:0000003f __SREG__
+     /tmp/ccHGyZY8.s:4      *ABS*:0000003e __SP_H__
+     /tmp/ccHGyZY8.s:5      *ABS*:0000003d __SP_L__
+     /tmp/ccHGyZY8.s:6      *ABS*:00000000 __tmp_reg__
+     /tmp/ccHGyZY8.s:7      *ABS*:00000001 __zero_reg__
+     /tmp/ccHGyZY8.s:94     .text:00000000 page_erase
+     /tmp/ccHGyZY8.s:151    .bootloader:00000000 boot_program_page
+
+UNDEFINED SYMBOLS
+__do_copy_data
+__do_clear_bss

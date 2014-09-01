@@ -1,0 +1,1 @@
+avarice -B 125KHz --program --file main.out --part atmega32 --jtag /dev/ttyUSB0 :4242

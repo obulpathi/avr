@@ -1,0 +1,303 @@
+   1               		.file	"bootloader.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.global __do_copy_data
+   8               		.global __do_clear_bss
+  11               		.text
+  12               	.Ltext0:
+  85               		.section	.bootloader,"ax",@progbits
+  89               	.global	boot_program_page
+  91               	boot_program_page:
+  92               		.stabd	46,0,0
+   1:bootloader.c  **** #include "bootloader.h"
+   2:bootloader.c  **** 
+   3:bootloader.c  **** void boot(void)
+   4:bootloader.c  **** {
+   5:bootloader.c  **** 	uint32_t page = 0;
+   6:bootloader.c  **** //	uint8_t *buf = 0;
+   7:bootloader.c  ****         uint8_t sreg;
+   8:bootloader.c  **** 	
+   9:bootloader.c  **** 	int i,j;
+  10:bootloader.c  **** 
+  11:bootloader.c  **** 	for( i = 0 ; i < 100 ; i++ )
+  12:bootloader.c  **** 	for( j = 0 ; j < 100 ; j++ )
+  13:bootloader.c  **** 	{
+  14:bootloader.c  **** 		// do nothing
+  15:bootloader.c  **** 	}
+  16:bootloader.c  **** 
+  17:bootloader.c  **** 	PORTD = ~PORTD;
+  18:bootloader.c  **** 	
+  19:bootloader.c  **** 	for( i = 0 ; i < 100 ; i++ )
+  20:bootloader.c  **** 	for( j = 0 ; j < 100 ; j++ )
+  21:bootloader.c  **** 	{
+  22:bootloader.c  **** 		// do nothing
+  23:bootloader.c  **** 	}
+  24:bootloader.c  **** 	
+  25:bootloader.c  **** 	PORTD = ~PORTD;
+  26:bootloader.c  **** 
+  27:bootloader.c  **** 	// save status register
+  28:bootloader.c  ****         sreg = SREG;
+  29:bootloader.c  **** 
+  30:bootloader.c  **** 	// erase first few pages ... 	
+  31:bootloader.c  **** 	for( page = 0 ; page < 10 ; page++ )
+  32:bootloader.c  **** 	{
+  33:bootloader.c  **** 		// erase the page
+  34:bootloader.c  **** 	        boot_page_erase (page);
+  35:bootloader.c  **** 		// wait until the memory is erased.
+  36:bootloader.c  **** 	        boot_spm_busy_wait ();
+  37:bootloader.c  **** 	}	
+  38:bootloader.c  **** 	
+  39:bootloader.c  ****         // Reenable RWW-section again. We need this if we want to jump back
+  40:bootloader.c  ****         // to the application after bootloading.
+  41:bootloader.c  ****         boot_rww_enable ();
+  42:bootloader.c  **** 	
+  43:bootloader.c  **** 	// restore status register
+  44:bootloader.c  ****         SREG = sreg;
+  45:bootloader.c  **** 
+  46:bootloader.c  **** 	for( i = 0 ; i < 100 ; i++ )
+  47:bootloader.c  **** 	for( j = 0 ; j < 100 ; j++ )
+  48:bootloader.c  **** 	{
+  49:bootloader.c  **** 		// do nothing
+  50:bootloader.c  **** 	}
+  51:bootloader.c  **** 	
+  52:bootloader.c  **** 	PORTD = ~PORTD;
+  53:bootloader.c  **** 
+  54:bootloader.c  **** 	for( i = 0 ; i < 100 ; i++ )
+  55:bootloader.c  **** 	for( j = 0 ; j < 100 ; j++ )
+  56:bootloader.c  **** 	{
+  57:bootloader.c  **** 		// do nothing
+  58:bootloader.c  **** 	}
+  59:bootloader.c  **** 	
+  60:bootloader.c  **** 	PORTD = ~PORTD;
+  61:bootloader.c  **** 
+  62:bootloader.c  **** 	return;
+  63:bootloader.c  **** }
+  64:bootloader.c  **** 
+  65:bootloader.c  **** void boot_program_page (uint32_t page, uint8_t *buf)
+  66:bootloader.c  **** {
+  94               	.LM0:
+  95               	.LFBB1:
+  96               	/* prologue: frame size=0 */
+  97 0000 9F92      		push r9
+  98 0002 AF92      		push r10
+  99 0004 BF92      		push r11
+ 100 0006 CF92      		push r12
+ 101 0008 DF92      		push r13
+ 102 000a EF92      		push r14
+ 103 000c FF92      		push r15
+ 104 000e 0F93      		push r16
+ 105 0010 1F93      		push r17
+ 106 0012 CF93      		push r28
+ 107 0014 DF93      		push r29
+ 108               	/* prologue end (size=11) */
+ 109 0016 7B01      		movw r14,r22
+ 110 0018 8C01      		movw r16,r24
+ 111 001a EA01      		movw r28,r20
+  67:bootloader.c  ****         uint16_t i;
+  68:bootloader.c  ****         uint8_t sreg;
+  69:bootloader.c  **** 
+  70:bootloader.c  **** 	// save status register
+  71:bootloader.c  ****         sreg = SREG;
+ 113               	.LM1:
+ 114 001c 9FB6      		in r9,95-0x20
+  72:bootloader.c  ****         // Disable interrupts.
+  73:bootloader.c  **** 	// cli();
+  74:bootloader.c  **** 	// wait for eeprom write completion
+  75:bootloader.c  ****         eeprom_busy_wait ();
+ 116               	.LM2:
+ 117 001e 0E94 0000 		call eeprom_busy_wait
+  76:bootloader.c  **** 	// erase the page
+  77:bootloader.c  ****         boot_page_erase (page);
+ 119               	.LM3:
+ 120 0022 C801      		movw r24,r16
+ 121 0024 B701      		movw r22,r14
+ 122 0026 0E94 0000 		call boot_page_erase
+  78:bootloader.c  **** 	// wait until the memory is erased.
+  79:bootloader.c  ****         boot_spm_busy_wait ();
+ 124               	.LM4:
+ 125 002a 0E94 0000 		call boot_spm_busy_wait
+ 126 002e AA24      		clr r10
+ 127 0030 BB24      		clr r11
+ 128 0032 6501      		movw r12,r10
+ 129               	.L2:
+ 130               	.LBB2:
+  80:bootloader.c  **** 
+  81:bootloader.c  **** 	// fill up the buffer
+  82:bootloader.c  ****         for (i=0; i<SPM_PAGESIZE; i+=2)
+  83:bootloader.c  ****         {
+  84:bootloader.c  ****             // Set up little-endian word.
+  85:bootloader.c  **** 
+  86:bootloader.c  ****             uint16_t w = *buf++;
+ 132               	.LM5:
+ 133 0034 8881      		ld r24,Y
+  87:bootloader.c  ****             w += (*buf++) << 8;
+ 135               	.LM6:
+ 136 0036 4981      		ldd r20,Y+1
+ 137 0038 5527      		clr r21
+ 138 003a 542F      		mov r21,r20
+ 139 003c 4427      		clr r20
+ 140 003e 480F      		add r20,r24
+ 141 0040 511D      		adc r21,__zero_reg__
+ 142 0042 2296      		adiw r28,2
+ 143 0044 C601      		movw r24,r12
+ 144 0046 B501      		movw r22,r10
+ 145 0048 6E0D      		add r22,r14
+ 146 004a 7F1D      		adc r23,r15
+ 147 004c 801F      		adc r24,r16
+ 148 004e 911F      		adc r25,r17
+  88:bootloader.c  ****         
+  89:bootloader.c  ****             boot_page_fill (page + i, w);
+ 150               	.LM7:
+ 151 0050 0E94 0000 		call boot_page_fill
+ 152 0054 82E0      		ldi r24,lo8(2)
+ 153 0056 90E0      		ldi r25,hi8(2)
+ 154 0058 A0E0      		ldi r26,hlo8(2)
+ 155 005a B0E0      		ldi r27,hhi8(2)
+ 156 005c A80E      		add r10,r24
+ 157 005e B91E      		adc r11,r25
+ 158 0060 CA1E      		adc r12,r26
+ 159 0062 DB1E      		adc r13,r27
+ 160               	.LBE2:
+ 162               	.LM8:
+ 163 0064 90E0      		ldi r25,lo8(256)
+ 164 0066 A916      		cp r10,r25
+ 165 0068 91E0      		ldi r25,hi8(256)
+ 166 006a B906      		cpc r11,r25
+ 167 006c 90E0      		ldi r25,hlo8(256)
+ 168 006e C906      		cpc r12,r25
+ 169 0070 90E0      		ldi r25,hhi8(256)
+ 170 0072 D906      		cpc r13,r25
+ 171 0074 01F4      		brne .L2
+  90:bootloader.c  ****         }
+  91:bootloader.c  **** 	
+  92:bootloader.c  **** 	// store buffer in flash page.
+  93:bootloader.c  ****         boot_page_write (page);
+ 173               	.LM9:
+ 174 0076 C801      		movw r24,r16
+ 175 0078 B701      		movw r22,r14
+ 176 007a 0E94 0000 		call boot_page_write
+  94:bootloader.c  **** 	
+  95:bootloader.c  **** 	// wait until the memory is written.
+  96:bootloader.c  ****         boot_spm_busy_wait(); 
+ 178               	.LM10:
+ 179 007e 0E94 0000 		call boot_spm_busy_wait
+  97:bootloader.c  **** 
+  98:bootloader.c  ****         // Reenable RWW-section again. We need this if we want to jump back
+  99:bootloader.c  ****         // to the application after bootloading.
+ 100:bootloader.c  ****         boot_rww_enable ();
+ 181               	.LM11:
+ 182 0082 0E94 0000 		call boot_rww_enable
+ 101:bootloader.c  **** 
+ 102:bootloader.c  ****         // restore the status register
+ 103:bootloader.c  ****         SREG = sreg;
+ 184               	.LM12:
+ 185 0086 9FBE      		out 95-0x20,r9
+ 186               	/* epilogue: frame size=0 */
+ 187 0088 DF91      		pop r29
+ 188 008a CF91      		pop r28
+ 189 008c 1F91      		pop r17
+ 190 008e 0F91      		pop r16
+ 191 0090 FF90      		pop r15
+ 192 0092 EF90      		pop r14
+ 193 0094 DF90      		pop r13
+ 194 0096 CF90      		pop r12
+ 195 0098 BF90      		pop r11
+ 196 009a AF90      		pop r10
+ 197 009c 9F90      		pop r9
+ 198 009e 0895      		ret
+ 199               	/* epilogue end (size=12) */
+ 200               	/* function boot_program_page size 80 (57) */
+ 205               	.Lscope1:
+ 207               		.stabd	78,0,0
+ 209               	.global	boot
+ 211               	boot:
+ 212               		.stabd	46,0,0
+ 214               	.LM13:
+ 215               	.LFBB2:
+ 216               	/* prologue: frame size=0 */
+ 217 00a0 DF92      		push r13
+ 218 00a2 EF92      		push r14
+ 219 00a4 FF92      		push r15
+ 220 00a6 0F93      		push r16
+ 221 00a8 1F93      		push r17
+ 222               	/* prologue end (size=5) */
+ 224               	.LM14:
+ 225 00aa 82B3      		in r24,50-0x20
+ 226 00ac 8095      		com r24
+ 227 00ae 82BB      		out 50-0x20,r24
+ 229               	.LM15:
+ 230 00b0 82B3      		in r24,50-0x20
+ 231 00b2 8095      		com r24
+ 232 00b4 82BB      		out 50-0x20,r24
+ 234               	.LM16:
+ 235 00b6 DFB6      		in r13,95-0x20
+ 236 00b8 EE24      		clr r14
+ 237 00ba FF24      		clr r15
+ 238 00bc 8701      		movw r16,r14
+ 239               	.L8:
+ 241               	.LM17:
+ 242 00be C801      		movw r24,r16
+ 243 00c0 B701      		movw r22,r14
+ 244 00c2 0E94 0000 		call boot_page_erase
+ 246               	.LM18:
+ 247 00c6 0E94 0000 		call boot_spm_busy_wait
+ 249               	.LM19:
+ 250 00ca 0894      		sec
+ 251 00cc E11C      		adc r14,__zero_reg__
+ 252 00ce F11C      		adc r15,__zero_reg__
+ 253 00d0 011D      		adc r16,__zero_reg__
+ 254 00d2 111D      		adc r17,__zero_reg__
+ 255 00d4 8AE0      		ldi r24,lo8(10)
+ 256 00d6 E816      		cp r14,r24
+ 257 00d8 F104      		cpc r15,__zero_reg__
+ 258 00da 0105      		cpc r16,__zero_reg__
+ 259 00dc 1105      		cpc r17,__zero_reg__
+ 260 00de 01F4      		brne .L8
+ 262               	.LM20:
+ 263 00e0 0E94 0000 		call boot_rww_enable
+ 265               	.LM21:
+ 266 00e4 DFBE      		out 95-0x20,r13
+ 268               	.LM22:
+ 269 00e6 82B3      		in r24,50-0x20
+ 270 00e8 8095      		com r24
+ 271 00ea 82BB      		out 50-0x20,r24
+ 273               	.LM23:
+ 274 00ec 82B3      		in r24,50-0x20
+ 275 00ee 8095      		com r24
+ 276 00f0 82BB      		out 50-0x20,r24
+ 277               	/* epilogue: frame size=0 */
+ 278 00f2 1F91      		pop r17
+ 279 00f4 0F91      		pop r16
+ 280 00f6 FF90      		pop r15
+ 281 00f8 EF90      		pop r14
+ 282 00fa DF90      		pop r13
+ 283 00fc 0895      		ret
+ 284               	/* epilogue end (size=6) */
+ 285               	/* function boot size 47 (36) */
+ 291               	.Lscope2:
+ 293               		.stabd	78,0,0
+ 294               		.text
+ 296               	.Letext0:
+ 297               	/* File "bootloader.c": code  127 = 0x007f (  93), prologues  16, epilogues  18 */
+DEFINED SYMBOLS
+                            *ABS*:00000000 bootloader.c
+     /tmp/ccVLrH7q.s:2      *ABS*:0000003f __SREG__
+     /tmp/ccVLrH7q.s:3      *ABS*:0000003e __SP_H__
+     /tmp/ccVLrH7q.s:4      *ABS*:0000003d __SP_L__
+     /tmp/ccVLrH7q.s:5      *ABS*:00000000 __tmp_reg__
+     /tmp/ccVLrH7q.s:6      *ABS*:00000001 __zero_reg__
+     /tmp/ccVLrH7q.s:91     .bootloader:00000000 boot_program_page
+     /tmp/ccVLrH7q.s:211    .bootloader:000000a0 boot
+
+UNDEFINED SYMBOLS
+__do_copy_data
+__do_clear_bss
+eeprom_busy_wait
+boot_page_erase
+boot_spm_busy_wait
+boot_page_fill
+boot_page_write
+boot_rww_enable

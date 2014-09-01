@@ -1,0 +1,37 @@
+step1:
+  process : defines process.
+  ISR (signal)
+  {
+    sawp p1 and p2;
+  }
+
+process:
+  literally a small microntroller itself ...
+  so contains all the stuff ... its like you brew two new small microntrollers from the big one ... 
+  and use each one of them for one task ... 
+#######################################################
+core component ... 
+tick_isr
+{
+	increment tick count ... 
+	if( timer_expred )
+	{
+		do thread switch
+	}
+}
+
+static : two tasks.
+1) how to associate a function with ISR?
+2) how to do switching
+	1) allocate stacks and memory stuff to each task ... 
+	2) what all consists of state??
+
+process:
+  defines process structure.
+  create a process.
+
+swap:
+  swaps proceses
+
+tick:
+  manage ticks

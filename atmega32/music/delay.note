@@ -1,0 +1,3 @@
+Please note that delay is generated using varable increments in for loops ...
+This is not accurate, amount of delay generated highly depends on the optimization used.
+For accurate delay use the timer functions.

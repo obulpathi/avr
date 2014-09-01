@@ -1,0 +1,8 @@
+s/TWI_Init/twi_init/g
+s/TWI_Start/twi_start/g
+s/TWI_Restart/twi_restart/g
+s/TWI_TxSlaveAddress/twi_tx_slave_address/g
+s/TWI_Transmit/twi_tx/g
+s/TWI_Receive/twi_rx/g
+s/TWI_Stop/twi_stop/g
+s/TWI_DeInit/twi_deinit/g

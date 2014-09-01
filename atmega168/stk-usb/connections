@@ -1,0 +1,6 @@
+MOSI 	<-> 1 <-> 
+MISO 	<-> 2 <-> 
+SCK 	<-> 3 <-> SCK
+RST 	<-> 4 <-> RST
+VCC 	<-> 5 <-> VCC
+GND 	<-> 6 <-> GND

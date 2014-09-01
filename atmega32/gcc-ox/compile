@@ -1,0 +1,12 @@
+#!/bin/bash
+MMCU="atmega32"
+CC="avr-gcc"
+OBJCOPY="avr-objcopy"
+CFLAGS="-g -mmcu=atmega32"
+
+for optimize in 0 1 2 3 s;
+do
+	$CC $CFLAGS -O$optimize -c main.c
+	$CC $CFLAGS -o main.out -Wl,-Map,main.map main.o
+	$OBJCOPY -j .text -O ihex main.out rom$optimize.hex
+done
